@@ -6,3 +6,5 @@
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 
 '''
+
+__version__ = '0.1.1'
