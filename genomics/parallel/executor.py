@@ -95,79 +95,78 @@ queue
 class Local:
     '''Local executor.
 
-        This executor will block if there are no more slots available!
+    :param limit: CPU load limit
+
+         if limit is an int>0 then it is the expected load average NOT
+         to be used, for instance if there are 32 cores and there
+         is a limit of 6, the system will try to never ago above 26.
+         A float between 0 and 1 will be interpreted as a the
+         fraction of CPUs to be used, e.g., with 32 cores, 0.25
+         will use at most 8
+         A negative value will be interpreted as the maximum number
+         of processes that can be executed in parallel.
+
+    This executor will block if there are no more slots available!
     '''
+
     def __init__(self, limit):
-        '''
-
-             if limit is an int>0 then it is the expected load average NOT
-                 to be used, for instance if there are 32 cores and there
-                 is a limit of 6, the system will try to never ago above 26.
-                 A float between 0 and 1 will be interpreted as a the
-                 fraction of CPUs to be used, e.g., with 32 cores, 0.25
-                 will use at most 8
-                 A negative value will be interpreted as the maximum number
-                 of processes that can be executed in parallel.
-
-        '''
         self.limit = limit
         self.cpus = multiprocessing.cpu_count()
         self.running = []
-        pass
 
     def clean_done(self):
         '''Removes dead processes from the running list.
         '''
-        myDels = []
+        dels = []
         for rIdx, p in enumerate(self.running):
             if p.poll() is not None:
-                myDels.append(rIdx)
-        myDels.reverse()
-        for myDel in myDels:
-            del self.running[myDel]
+                dels.append(rIdx)
+        dels.reverse()
+        for del_ in dels:
+            del self.running[del_]
 
-    def wait(self, forAll=False):
+    def wait(self, for_all=False):
         '''Blocks if there are no slots available
 
-           forAll - Also waits if there is *ANY* job running (i.e.
+        :param for_all: Also waits if there is *ANY* job running (i.e.
                     block/barrier)
         '''
-        self.cleanDone()
+        self.clean_done()
         numWaits = 0
         if self.limit > 0 and type(self.limit) == int:
-            cond = "len(self.running) >= self.cpus - self.limit"
+            cond = 'len(self.running) >= self.cpus - self.limit'
         elif self.limit < 0:
-            cond = "len(self.running) >= - self.limit"
+            cond = 'len(self.running) >= - self.limit'
         else:
-            cond = "len(self.running) >= self.cpus * self.limit"
-        while eval(cond) or (forAll and len(self.running) > 0):
+            cond = 'len(self.running) >= self.cpus * self.limit'
+        while eval(cond) or (for_all and len(self.running) > 0):
             time.sleep(1)
-            self.cleanDone()
+            self.clean_done()
             numWaits += 1
 
     def submit(self, command, parameters):
         '''Submits a job
         '''
         self.wait()
-        if hasattr(self, "out"):
+        if hasattr(self, 'out'):
             out = self.out
         else:
-            out = "/dev/null"
-        if hasattr(self, "err"):
+            out = '/dev/null'
+        if hasattr(self, 'err'):
             err = self.err
         else:
-            err = "/dev/null"
-        if err == "stderr":
-            errSt = ""
+            err = '/dev/null'
+        if err == 'stderr':
+            errSt = ''
         else:
-            errSt = "2> " + err
-        p = subprocess.Popen("%s %s > %s %s" %
+            errSt = '2> ' + err
+        p = subprocess.Popen('%s %s > %s %s' %
                              (command, parameters, out, errSt),
                              shell=True)
         self.running.append(p)
-        if hasattr(self, "out"):
+        if hasattr(self, 'out'):
             del self.out
-        if hasattr(self, "err"):
+        if hasattr(self, 'err'):
             del self.err
 
 
@@ -186,7 +185,7 @@ class Pseudo:
     def submit(self, command, parameters):
         '''Submits a job
         '''
-        self.outFile.write("nohup /usr/bin/nice -n19 %s %s > %s\n" %
+        self.outFile.write('nohup /usr/bin/nice -n19 %s %s > %s\n' %
                            (command, parameters, self.out))
         self.outFile.flush()
 
@@ -205,7 +204,7 @@ class LSF:
 
         '''
         self.running = []
-        self.queue = "normal"  # Default queue name is "normal"
+        self.queue = 'normal'  # Default queue name is "normal"
         self.mem = 4000  # Request 4GB as a default
         self.numPasses = 0
         self.outDir = os.path.expanduser("~/tmp")
@@ -215,12 +214,12 @@ class LSF:
         '''Removes dead processes from the running list.
         '''
         ongoing = []
-        statusFile = "/tmp/farm-%d" % (os.getpid())
-        os.system("bjobs > %s 2>/dev/null" % statusFile)
+        statusFile = '/tmp/farm-%d' % (os.getpid())
+        os.system('bjobs > %s 2>/dev/null' % statusFile)
         f = open(statusFile)
         f.readline()  # header
         for l in f:
-            toks = list(filter(lambda x: x != "", l.rstrip().split(" ")))
+            toks = list(filter(lambda x: x != '', l.rstrip().split(' ')))
             ongoing.append(int(toks[0]))
         os.remove(statusFile)
         myDels = []
@@ -231,22 +230,22 @@ class LSF:
         for myDel in myDels:
             del self.running[myDel]
 
-    def wait(self, forAll=False, beCareful=60):
+    def wait(self, for_all=False, be_careful=60):
         '''Blocks according to some condition
 
-           forAll - Also waits if there is *ANY* job running (i.e.
+           :param for_all: Also waits if there is *ANY* job running (i.e.
                     block/barrier)
 
-           beCareful - Wait X secs before starting. This is because
+           :param be_careful: Wait X secs before starting. This is because
                        tasks take time to go into the pool.
         '''
-        time.sleep(beCareful)
-        if forAll:
+        time.sleep(be_careful)
+        if for_all:
             while len(self.running) > 0:
-                self.cleanDone()
+                self.clean_done()
                 time.sleep(1)
 
-    def submit(self, command, parameters="", myDir=os.getcwd()):
+    def submit(self, command, parameters='', myDir=os.getcwd()):
         '''Submits a job
         '''
         M = self.mem * 1000
@@ -323,10 +322,10 @@ class SGE:
                        tasks take time to go into the pool.
         '''
         time.sleep(beCareful)
-        self.cleanDone()
+        self.clean_done()
         if forAll:
             while len(self.running) > 0:
-                self.cleanDone()
+                self.clean_done()
                 time.sleep(1)
 
     def submit(self, command, parameters="", myDir=os.getcwd()):
@@ -416,10 +415,10 @@ class Torque:
                        tasks take time to go into the pool.
         '''
         time.sleep(beCareful)
-        self.cleanDone()
+        self.clean_done()
         if forAll:
             while len(self.running) > 0:
-                self.cleanDone()
+                self.clean_done()
                 time.sleep(1)
 
     def submit(self, command, parameters="", myDir=os.getcwd()):
@@ -500,13 +499,13 @@ class SLURM:
                        tasks take time to go into the pool.
         '''
         time.sleep(beCareful)
-        self.cleanDone()
+        self.clean_done()
         if forAll:
             while len(self.running) > 0:
-                self.cleanDone()
+                self.clean_done()
                 time.sleep(1)
 
-    def submit(self, command, parameters="", myDir=os.getcwd()):
+    def submit(self, command, parameters='', myDir=os.getcwd()):
         '''Submits a job
         '''
         jobFile = "/tmp/job-%d.%d" % (os.getpid(), self.cnt)
