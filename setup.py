@@ -34,17 +34,14 @@ class Sphinx(Command):
     def run(self):
         # metadata contains information supplied in setup()
         metadata = self.distribution.metadata
-        # package_dir may be None, in that case use the current directory.
-        src_dir = (self.distribution.package_dir or {'': ''})['']
-        src_dir = os.path.join(os.getcwd(),  src_dir)
+        src_dir = os.path.join(os.getcwd(),  'genomics')
         # Run sphinx by calling the main method, '--full' also adds a conf.py
         sphinx.apidoc.main(
-            ['', '--full', '-H', metadata.name, '-A', metadata.author,
+            ['-H', metadata.name, '-A', metadata.author,
              '-V', metadata.version, '-R', metadata.version,
-             '-o', os.path.join('doc', 'source'), src_dir])
+             '-o', os.path.join(['doc', 'api']), src_dir])
         # build the doc sources
-        sphinx.main(['', os.path.join('doc', 'source'),
-                     os.path.join('doc', 'build')])
+        sphinx.main(['', 'doc'])
 
 
 setup(
