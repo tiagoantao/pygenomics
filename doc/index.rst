@@ -6,6 +6,9 @@
 Welcome to Python Genomics' documentation!
 ==========================================
 
+
+pygenomics is a modern library for genomics work in Python 3.4 and above.
+
 Contents:
 
 .. toctree::
