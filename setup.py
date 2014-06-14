@@ -23,7 +23,7 @@ for line in open('genomics/__init__.py'):
 
 class Sphinx(Command):
     user_options = []
-    description = 'sphinx'
+    description = 'build sphinx documentation'
 
     def initialize_options(self):
         pass
@@ -58,11 +58,10 @@ setup(
         'Topic :: Utilities',
         'License :: OSI Approved :: GNU Affero General Public License v3',
     ],
-    cmdclass = {
-        'install': install
+    cmdclass={
+        'install': install,
+        'doc': Sphinx
     },
-    setup_requires = ['sphinx'],
-    entry_points = {'distutils.commands': ['sphinx=Sphinx']}
 )
 
 #TODO dependencies
