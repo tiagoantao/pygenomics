@@ -60,7 +60,9 @@ setup(
     ],
     cmdclass = {
         'install': install
-    }
+    },
+    setup_requires = ['sphinx'],
+    entry_points = {'distutils.commands': ['sphinx=Sphinx']}
 )
 
 #TODO dependencies
