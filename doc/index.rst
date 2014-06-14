@@ -12,9 +12,6 @@ Contents:
    :maxdepth: 2
 
 
-.. automodule:: genomics
-
-
 
 Indices and tables
 ==================
