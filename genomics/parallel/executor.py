@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 '''
-.. module:: executor
-   :synopsis: Process executor supporting local and grid environments.
+.. module:: genomics.parallel.executor
+   :synopsis: Process executor supporting local and grid environments
+   :noindex:
 
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 
+
+Provides classes to execute parallel processes under several environments.
+
+Some classes are not tested for long and might not be working.
+
+There should be a abstract parent class, but that is not so.
 '''
 
 import getpass
@@ -15,7 +22,9 @@ import time
 
 
 class Condor:
-    ''' Class for Condor.
+    '''Parallel execution under Condor.
+
+    .. danger:: This is not tested for long. Probably does not work
     '''
     def __init__(self):
         ''' Constructor
@@ -84,7 +93,7 @@ queue
 
 
 class Local:
-    ''' The local executor.
+    '''Local executor.
 
         This executor will block if there are no more slots available!
     '''
@@ -106,7 +115,7 @@ class Local:
         self.running = []
         pass
 
-    def cleanDone(self):
+    def clean_done(self):
         '''Removes dead processes from the running list.
         '''
         myDels = []
@@ -163,7 +172,7 @@ class Local:
 
 
 class Pseudo:
-    ''' The pseudo executor.
+    '''The pseudo executor.
 
         This executor will Dump of list of nohup nice commands
     '''
@@ -186,7 +195,9 @@ class Pseudo:
 
 
 class LSF:
-    ''' The LSF executor.
+    '''The LSF executor.
+
+    .. danger:: This is not tested for long. Probably does not work
 
     '''
     def __init__(self):
@@ -200,7 +211,7 @@ class LSF:
         self.outDir = os.path.expanduser("~/tmp")
         self.cnt = 1
 
-    def cleanDone(self):
+    def clean_done(self):
         '''Removes dead processes from the running list.
         '''
         ongoing = []
@@ -281,7 +292,7 @@ class SGE:
         self.hosts = []
         self.cpus = 1
 
-    def cleanDone(self):
+    def clean_done(self):
         '''Removes dead processes from the running list.
         '''
         ongoing = []
@@ -369,7 +380,7 @@ class Torque:
         self.out = None
         self.queue = "long"  # hard-coded default...
 
-    def cleanDone(self):
+    def clean_done(self):
         '''Removes dead processes from the running list.
         '''
         ongoing = []
@@ -454,7 +465,7 @@ class SLURM:
         self.out = None
         self.partition = "main"  # hard-coded default...
 
-    def cleanDone(self):
+    def clean_done(self):
         '''Removes dead processes from the running list.
         '''
         ongoing = []
