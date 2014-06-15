@@ -26,18 +26,18 @@ class Node(metaclass=abc.ABCMeta):
 
     :param db: Database
     :param to_write: Write node?
-    :param desired_pos: Any position inside the node
 
     A node is a file that holds a (small) portion of the data. Its size is
     defined by the database granularity. It should be the size of the map
     operation on the map reduce framework. It should very easily fit in
     memory.
     '''
-    def __init__(self, db, to_write, desired_pos=None):
+    def __init__(self, db, to_write):
         self.db = db
         self.to_write = to_write
         if to_write:
             self._vals = [None] * db.granularity
+
 
     def assign(self, position, value):
         if not self.to_write:
@@ -51,8 +51,41 @@ class Node(metaclass=abc.ABCMeta):
                                self.node_file.split(os.sep)[:-1])
         os.makedirs(node_dir)
         w = open(self.node_file + '.tmp', 'wt', encoding='utf-8')
+        if self.db.is_sparse:
+            poses = []
+            vals = []
+            for i, val in enumerate(self._vals):
+                if val is not None:
+                    vals.append(val)
+                    poses.append(i)
+            w.write('\t'.join([str(x + self.start_pos) for x in poses]))
+            w.write('\n')
+            for v in vals:
+                w.write('%s\n' % repr(v))
+        else:
+            for v in self._vals:
+                w.write('%s\n' % repr(v))
         w.close()
         os.rename(self.node_file + '.tmp'. self.node_file)
+
+    @property
+    @abc.abstractmethod
+    def get_node_file(self):
+        '''Returns the FQDN of the file that holds the node'''
+        pass
+
+
+class GenomeNode(Node):
+    def __init__(self, db, to_write, chromosome, position):
+        self.index = (position - 1) // db.granularity
+        self.start_pos = self.index * db.granularity + 1
+        Node.__init__(self, db, to_write)
+        self.chromosome = chromosome
+
+    def get_node_file(self):
+        fname = os.sep.join('%s' % str(self.chromosome),
+                            '%9d' % self.start_pos)
+        return self.db.base_dir + os.sep + fname
 
 
 class DB:
@@ -82,30 +115,3 @@ class DB:
 
     def find_missing_nodes(self):
         pass
-
-
-class Key:
-    def __init__(self, db, granularity):
-        self.db = db
-        self.granularity = granularity
-
-    def enumerate_nodes(self):
-        pass
-
-    def get_node(self, to_write, **kwargs):
-        pass
-
-
-class GenomeKey(Key):
-    def __init__(self, db, granularity, genome):
-        Key.__init__(self, db, granularity)
-        self.genome = genome
-
-    def enumerate_nodes(self):
-        pass
-
-    def get_node(self, to_write, chromosome, position):
-        fname = os.sep.join('%s' % str(chromosome),
-                            '%9d' % position // self.granularity)
-        return Node(self.db.base_dir, fname, self.granularity, to_write,
-                    self.db.is_sparse)
