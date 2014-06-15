@@ -21,36 +21,92 @@ class DBException(Exception):
         return repr(self.value)
 
 
-class Node(metaclass=abc.ABCMeta):
+class Schema(metaclass=abc.ABCMeta):
+    '''A Database schema
+
+    :param granularity: Record granularity
+
+    Granularity indicates how many positions a node can store. A sparse
+    database will hold at most those. A non-sparse database will hold
+    precisely those (save for the very last node).
+    '''
+    def __init__(self, granularity):
+        self.granularity = granularity
+
+    @abc.abstractmethod
+    def enumerate_node_indexes(self):
+        '''generator of nodes (with start and end)'''
+        pass
+
+    @abc.abstractmethod
+    def get_partial_node_for_index(self, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def get_last_index_start(self, **kwargs):
+        pass
+
+
+class GenomeSchema(Schema):
+    def __init__(self, granularity, genome):
+        Schema.__init__(granularity)
+        self.genome = genome
+
+    def enumerate_node_indexes(self):
+        for chrom, size in self.genome.chroms.items():
+            max_node = 1 + size // self.granularity
+            for i in range(max_node):
+                yield {'chromosome': chrom,
+                       'position': 1 + i * self.granularity}
+
+    def get_partial_node_for_index(self, **kwargs):
+        chromosome = kwargs['chromosome']
+        position = kwargs['position']
+        inner_node = (position - 1) // self.granularity
+        fname = os.sep.join('%s' % str(chromosome), '%9d' % inner_node)
+        return fname
+
+    def get_last_index_start(self, **kwargs):
+        position = kwargs['position']
+        return (position - 1) // self.granularity
+
+
+class Node:
     '''A Database node
 
     :param db: Database
     :param to_write: Write node?
+    :param partial_name: Name inside the DB
+    :param last_index_start: Start position of the last key component
 
     A node is a file that holds a (small) portion of the data. Its size is
     defined by the database granularity. It should be the size of the map
     operation on the map reduce framework. It should very easily fit in
     memory.
     '''
-    def __init__(self, db, to_write):
+    def __init__(self, db, to_write, partial_name, last_index_start):
+        #TODO partial name
         self.db = db
         self.to_write = to_write
+        self.partial_name = partial_name
+        self.start_pos = last_index_start
         if to_write:
             self._vals = [None] * db.granularity
 
 
-    def assign(self, position, value):
+    def assign(self, last_index_position, value):
         if not self.to_write:
             raise DBException('Need to be in write mode to assign')
-        self.vals[position - self.start_pos] = value
+        self.vals[last_index_position - self.start_pos] = value
 
     def commit(self):
         if not self.to_write:
             raise DBException('Need to be in write mode to commit')
-        node_dir = os.sep.join([self.base_dir] +
-                               self.node_file.split(os.sep)[:-1])
+        node_file = os.sep.join([self.base_dir,
+                                self.partial_name])
+        node_dir = os.sep.join(node_file.split(os.sep)[:-1])
         os.makedirs(node_dir)
-        w = open(self.node_file + '.tmp', 'wt', encoding='utf-8')
+        w = open(node_file + '.tmp', 'wt', encoding='utf-8')
         if self.db.is_sparse:
             poses = []
             vals = []
@@ -68,50 +124,29 @@ class Node(metaclass=abc.ABCMeta):
         w.close()
         os.rename(self.node_file + '.tmp'. self.node_file)
 
-    @property
-    @abc.abstractmethod
-    def get_node_file(self):
-        '''Returns the FQDN of the file that holds the node'''
-        pass
-
-
-class GenomeNode(Node):
-    def __init__(self, db, to_write, chromosome, position):
-        self.index = (position - 1) // db.granularity
-        self.start_pos = self.index * db.granularity + 1
-        Node.__init__(self, db, to_write)
-        self.chromosome = chromosome
-
-    def get_node_file(self):
-        fname = os.sep.join('%s' % str(self.chromosome),
-                            '%9d' % self.start_pos)
-        return self.db.base_dir + os.sep + fname
-
 
 class DB:
     '''A Database
 
     :param base_dir: Base directory
-    :param node_class: Node class
+    :param schema: Schema
     :param granularity: Record granularity
     :param is_sparse: Sparse implementation
 
-    Granularity indicates how many positions a node can store. A sparse
-    database will hold at most those. A non-sparse database will hold
-    precisely those (save for the very last node).
 
     The node can be mostly anything structured that ends in something that is
     an integer.  For example is can be a (chromosome, position)
     '''
-    def __init__(self, base_dir, key_class, granularity, is_sparse=False):
+    def __init__(self, base_dir, schema, granularity, is_sparse=False):
         self.base_dir = base_dir
-        self.key_class = key_class
+        self.schema = schema
         self.granularity = granularity
         self.is_sparse = is_sparse
 
     def get_write_node(self, **kwargs):
-        node = self.key_class(self.granularity, kwargs)
-        return node.get_node(kwargs)
+        partial_name = self.schema.get_partial_node_for_index(kwargs)
+        last_index_start = self.schema.get_last_index_start(kwargs)
+        return Node(self, True, partial_name, last_index_start)
 
     def find_missing_nodes(self):
         pass
