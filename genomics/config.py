@@ -23,6 +23,22 @@ class Config:
 
     The default config file is defined above and can be changed before doing
     import genomics
+
+
+    Configuration parameters are separated by section
+
+    Section main
+    ------------
+
+    * **mr_dir** Directory where temporary map_reduce communication is stored
+    * **grid** Grid type (Local)
+
+    Section grid.local
+    ------------------
+
+    The parameters for grid type Local.
+
+    Currently limit (see :class:genomics.parallel.executor.Local)
     '''
     def __init__(self, config_file=config_file):
         self.config_file = config_file
