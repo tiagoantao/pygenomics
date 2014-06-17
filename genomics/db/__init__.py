@@ -66,9 +66,11 @@ class GenomeSchema(Schema):
         self.genome = genome
 
     def enumerate_node_keys(self):
-        for chrom, (size, centro) in self.genome.chroms.items():
+        for chrom in self.genome.chrom_order:
+            size, centro = self.genome.chroms[chrom]
             max_node = 1 + size // self.granularity
             for i in range(max_node):
+                print(1 + i * self.granularity)
                 yield Key(['chromosome', 'position'], chrom,
                           1 + i * self.granularity)
 
