@@ -27,18 +27,16 @@ class Config:
 
     Configuration parameters are separated by section
 
-    Section main
-    ------------
+    **Section main**
 
     * **mr_dir** Directory where temporary map_reduce communication is stored
     * **grid** Grid type (Local)
 
-    Section grid.local
-    ------------------
+    **Section grid.local**
 
     The parameters for grid type Local.
 
-    Currently limit (see :class:genomics.parallel.executor.Local)
+    Currently limit (see :py:class:`genomics.parallel.executor.Local`)
     '''
     def __init__(self, config_file=config_file):
         self.config_file = config_file
