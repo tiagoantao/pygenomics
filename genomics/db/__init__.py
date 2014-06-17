@@ -140,23 +140,18 @@ class DB:
 
     :param base_dir: Base directory
     :param schema: Schema
-    :param granularity: Record granularity
-    :param is_sparse: Sparse implementation
-
 
     The node can be mostly anything structured that ends in something that is
     an integer.  For example is can be a (chromosome, position)
     '''
-    def __init__(self, base_dir, schema, granularity, is_sparse=False):
+    def __init__(self, base_dir, schema):
         self.base_dir = base_dir
         self.schema = schema
-        self.granularity = granularity
-        self.is_sparse = is_sparse
 
-    def get_write_node(self, **kwargs):
+    def get_write_node(self, key, **kwargs):
         partial_name = self.schema.get_partial_node_for_index(kwargs)
         last_index_start = self.schema.get_last_index_start(kwargs)
-        return Node(self, True, partial_name, last_index_start)
+        return Node(self, True, key, partial_name)
 
     def find_missing_nodes(self):
         pass
