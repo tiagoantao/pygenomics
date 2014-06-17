@@ -9,6 +9,7 @@
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 
 '''
+import importlib
 import os
 import pickle
 import tempfile
@@ -24,5 +25,16 @@ def pickle_in(datum):
     w.close()
     return w.name
 
+
 def do_map(pname):
-    print(pname)
+    f = open(pname, 'rb')
+    paras = pickle.load(f, encoding='bytes')
+    f.close()
+    fqdn_name = paras[0]
+    fqdn_toks = fqdn_name.split('.')
+    module = importlib.import_module('.'.join(fqdn_toks[:-1]))
+    fun = getattr(module, fqdn_toks[-1])
+    node = paras[1]
+    args = paras[2:]
+    fun(node, *args)
+    #os.remove(pname)
