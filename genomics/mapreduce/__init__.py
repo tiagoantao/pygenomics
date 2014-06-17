@@ -23,3 +23,6 @@ def pickle_in(datum):
     pickle.dump(datum, w)
     w.close()
     return w.name
+
+def do_map(pname):
+    print(pname)
