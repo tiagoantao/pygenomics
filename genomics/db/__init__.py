@@ -30,6 +30,12 @@ class Key:
     def get_last_key(self):
         return self.__dict__[self.key_order[-1]]
 
+    def __str__(self):
+        str_ = 'Keys: ' + '/'.join(self.key_order)
+        str_ += ' Values: ' + '/'.join([repr(self.__dict__[x])
+                                        for x in self.key_order])
+        return str_
+
 
 class Schema(metaclass=abc.ABCMeta):
     '''A Database schema
@@ -56,11 +62,11 @@ class Schema(metaclass=abc.ABCMeta):
 
 class GenomeSchema(Schema):
     def __init__(self, granularity, genome):
-        Schema.__init__(granularity)
+        Schema.__init__(self, granularity)
         self.genome = genome
 
     def enumerate_node_keys(self):
-        for chrom, size in self.genome.chroms.items():
+        for chrom, (size, centro) in self.genome.chroms.items():
             max_node = 1 + size // self.granularity
             for i in range(max_node):
                 yield Key(['chromosome', 'position'], chrom,
