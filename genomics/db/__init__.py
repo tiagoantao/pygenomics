@@ -47,6 +47,16 @@ class Schema(metaclass=abc.ABCMeta):
         pass
 
 
+class Key:
+    def __init__(self, key_order, **kwargs):
+        self.key_order = key_order
+        for name in key_order:
+            self.__dict__[name] = kwargs[name]
+
+    def get_last_key(self):
+        return self.__dict__[self.key_order[-1]]
+
+
 class GenomeSchema(Schema):
     def __init__(self, granularity, genome):
         Schema.__init__(granularity)
@@ -76,28 +86,28 @@ class Node:
 
     :param db: Database
     :param to_write: Write node?
+    :param key: Key to the first position
     :param partial_name: Name inside the DB
-    :param last_index_start: Start position of the last key component
+    :param start_pos: Key with start position
 
     A node is a file that holds a (small) portion of the data. Its size is
     defined by the database granularity. It should be the size of the map
     operation on the map reduce framework. It should very easily fit in
     memory.
     '''
-    def __init__(self, db, to_write, partial_name, last_index_start):
-        #TODO partial name
+    def __init__(self, db, to_write, key, partial_name):
         self.db = db
         self.to_write = to_write
+        self.key = key
         self.partial_name = partial_name
-        self.start_pos = last_index_start
         if to_write:
             self._vals = [None] * db.granularity
-
 
     def assign(self, last_index_position, value):
         if not self.to_write:
             raise DBException('Need to be in write mode to assign')
-        self.vals[last_index_position - self.start_pos] = value
+        last_start_pos = self.key.get_last_pos()
+        self.vals[last_index_position - last_start_pos] = value
 
     def commit(self):
         if not self.to_write:
