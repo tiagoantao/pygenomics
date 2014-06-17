@@ -9,6 +9,7 @@
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 
 '''
+import os
 import pickle
 import tempfile
 
@@ -18,7 +19,7 @@ mr_dir = genomics.cfg.mr_dir
 
 
 def pickle_in(datum):
-    w, fname = tempfile.mkstemp(dir=mr_dir)
+    w = tempfile.NamedTemporaryFile(dir=mr_dir, delete=False)
     pickle.dump(datum, w)
     w.close()
-    return fname
+    return w.name
