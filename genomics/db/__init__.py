@@ -21,6 +21,16 @@ class DBException(Exception):
         return repr(self.value)
 
 
+class Key:
+    def __init__(self, key_order, *args):
+        self.key_order = key_order
+        for i, name in enumerate(key_order):
+            self.__dict__[name] = args[i]
+
+    def get_last_key(self):
+        return self.__dict__[self.key_order[-1]]
+
+
 class Schema(metaclass=abc.ABCMeta):
     '''A Database schema
 
@@ -34,27 +44,14 @@ class Schema(metaclass=abc.ABCMeta):
         self.granularity = granularity
 
     @abc.abstractmethod
-    def enumerate_node_indexes(self):
-        '''generator of nodes (with start and end)'''
+    def enumerate_node_keys(self):
+        '''generator of key nodes'''
         pass
 
     @abc.abstractmethod
-    def get_partial_node_for_index(self, **kwargs):
+    def get_partial_node_for_key(self, key):
+        '''Returns the partial name of the node (wo basedir)'''
         pass
-
-    @abc.abstractmethod
-    def get_last_index_start(self, **kwargs):
-        pass
-
-
-class Key:
-    def __init__(self, key_order, **kwargs):
-        self.key_order = key_order
-        for name in key_order:
-            self.__dict__[name] = kwargs[name]
-
-    def get_last_key(self):
-        return self.__dict__[self.key_order[-1]]
 
 
 class GenomeSchema(Schema):
@@ -62,23 +59,19 @@ class GenomeSchema(Schema):
         Schema.__init__(granularity)
         self.genome = genome
 
-    def enumerate_node_indexes(self):
+    def enumerate_node_keys(self):
         for chrom, size in self.genome.chroms.items():
             max_node = 1 + size // self.granularity
             for i in range(max_node):
-                yield {'chromosome': chrom,
-                       'position': 1 + i * self.granularity}
+                yield Key(['chromosome', 'position'], chrom,
+                          1 + i * self.granularity)
 
-    def get_partial_node_for_index(self, **kwargs):
-        chromosome = kwargs['chromosome']
-        position = kwargs['position']
+    def get_partial_node_for_key(self, key):
+        chromosome = key.chromosome
+        position = key.position
         inner_node = (position - 1) // self.granularity
         fname = os.sep.join('%s' % str(chromosome), '%9d' % inner_node)
         return fname
-
-    def get_last_index_start(self, **kwargs):
-        position = kwargs['position']
-        return (position - 1) // self.granularity
 
 
 class Node:
@@ -87,19 +80,17 @@ class Node:
     :param db: Database
     :param to_write: Write node?
     :param key: Key to the first position
-    :param partial_name: Name inside the DB
-    :param start_pos: Key with start position
 
     A node is a file that holds a (small) portion of the data. Its size is
     defined by the database granularity. It should be the size of the map
     operation on the map reduce framework. It should very easily fit in
     memory.
     '''
-    def __init__(self, db, to_write, key, partial_name):
+    def __init__(self, db, to_write, key):
         self.db = db
         self.to_write = to_write
         self.key = key
-        self.partial_name = partial_name
+        self.partial_name = db.schema.get_partial_node_for_key(key)
         if to_write:
             self._vals = [None] * db.granularity
 
@@ -148,10 +139,8 @@ class DB:
         self.base_dir = base_dir
         self.schema = schema
 
-    def get_write_node(self, key, **kwargs):
-        partial_name = self.schema.get_partial_node_for_index(kwargs)
-        last_index_start = self.schema.get_last_index_start(kwargs)
-        return Node(self, True, key, partial_name)
+    def get_write_node(self, key):
+        return Node(self, True, key)
 
     def find_missing_nodes(self):
         pass
