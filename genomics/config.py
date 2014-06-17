@@ -44,6 +44,7 @@ class Config:
     def load_config(self):
         config = configparser.ConfigParser()
         config.read(self.config_file)
+        self.mr_dir = config['main']['mr_dir']
         self.grid = config['main']['grid']
         if self.grid == 'Local':
             self.grid_limit = config['grid.local']['limit']
