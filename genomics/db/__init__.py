@@ -64,13 +64,13 @@ class GenomeSchema(Schema):
     def __init__(self, granularity, genome):
         Schema.__init__(self, granularity)
         self.genome = genome
+        self.type = 'Genome'
 
     def enumerate_node_keys(self):
         for chrom in self.genome.chrom_order:
             size, centro = self.genome.chroms[chrom]
             max_node = 1 + size // self.granularity
             for i in range(max_node):
-                print(1 + i * self.granularity)
                 yield Key(['chromosome', 'position'], chrom,
                           1 + i * self.granularity)
 
@@ -78,8 +78,11 @@ class GenomeSchema(Schema):
         chromosome = key.chromosome
         position = key.position
         inner_node = (position - 1) // self.granularity
-        fname = os.sep.join('%s' % str(chromosome), '%9d' % inner_node)
+        fname = os.sep.join(['%s' % str(chromosome), '%10d' % inner_node])
         return fname
+
+    def __str__(self):
+        return 'Genome Schema: %s' % self.genome.name
 
 
 class Node:
@@ -100,7 +103,7 @@ class Node:
         self.key = key
         self.partial_name = db.schema.get_partial_node_for_key(key)
         if to_write:
-            self._vals = [None] * db.granularity
+            self._vals = [None] * db.schema.granularity
 
     def assign(self, last_index_position, value):
         if not self.to_write:
@@ -132,6 +135,12 @@ class Node:
                 w.write('%s\n' % repr(v))
         w.close()
         os.rename(self.node_file + '.tmp'. self.node_file)
+
+    def __str__(self):
+        str_ = 'DB/Schema: ' + '/'.join([self.db.base_dir,
+                                         str(self.db.schema)])
+        str_ += ' (%s)' % str(self.key)
+        return str_
 
 
 class DB:
