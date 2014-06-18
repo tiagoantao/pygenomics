@@ -38,4 +38,4 @@ def do_map(pname):
     args = paras[2:]
     fun(node, *args)
     node.commit()
-    #os.remove(pname)
+    os.remove(pname)
