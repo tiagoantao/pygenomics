@@ -10,6 +10,7 @@
 
 '''
 import abc
+import bz2
 import os
 
 
@@ -78,7 +79,7 @@ class GenomeSchema(Schema):
         chromosome = key.chromosome
         position = key.position
         inner_node = (position - 1) // self.granularity
-        fname = os.sep.join(['%s' % str(chromosome), '%10d' % inner_node])
+        fname = os.sep.join(['%s' % str(chromosome), '%010d' % inner_node])
         return fname
 
     def __str__(self):
@@ -108,17 +109,21 @@ class Node:
     def assign(self, last_index_position, value):
         if not self.to_write:
             raise DBException('Need to be in write mode to assign')
-        last_start_pos = self.key.get_last_pos()
-        self.vals[last_index_position - last_start_pos] = value
+        start_pos = self.key.get_last_key()
+        self._vals[last_index_position - start_pos] = value
 
     def commit(self):
         if not self.to_write:
             raise DBException('Need to be in write mode to commit')
-        node_file = os.sep.join([self.base_dir,
+        node_file = os.sep.join([self.db.base_dir,
                                 self.partial_name])
         node_dir = os.sep.join(node_file.split(os.sep)[:-1])
-        os.makedirs(node_dir)
-        w = open(node_file + '.tmp', 'wt', encoding='utf-8')
+        try:
+            os.makedirs(node_dir)
+        except FileExistsError:
+            pass  # This is ok
+        w = bz2.open(node_file + '.tmp', 'wt', encoding='utf-8')
+        start_pos = self.key.get_last_key()
         if self.db.is_sparse:
             poses = []
             vals = []
@@ -126,7 +131,7 @@ class Node:
                 if val is not None:
                     vals.append(val)
                     poses.append(i)
-            w.write('\t'.join([str(x + self.start_pos) for x in poses]))
+            w.write('\t'.join([str(x + start_pos) for x in poses]))
             w.write('\n')
             for v in vals:
                 w.write('%s\n' % repr(v))
@@ -134,7 +139,7 @@ class Node:
             for v in self._vals:
                 w.write('%s\n' % repr(v))
         w.close()
-        os.rename(self.node_file + '.tmp'. self.node_file)
+        os.rename(node_file + '.tmp', node_file)
 
     def __str__(self):
         str_ = 'DB/Schema: ' + '/'.join([self.db.base_dir,
@@ -148,13 +153,15 @@ class DB:
 
     :param base_dir: Base directory
     :param schema: Schema
+    :param is_sparse: sparse representation?
 
     The node can be mostly anything structured that ends in something that is
     an integer.  For example is can be a (chromosome, position)
     '''
-    def __init__(self, base_dir, schema):
+    def __init__(self, base_dir, schema, is_sparse):
         self.base_dir = base_dir
         self.schema = schema
+        self.is_sparse = is_sparse
 
     def get_write_node(self, key):
         return Node(self, True, key)
