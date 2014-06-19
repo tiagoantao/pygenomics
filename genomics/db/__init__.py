@@ -31,6 +31,21 @@ class Key:
     def get_last_key(self):
         return self.__dict__[self.key_order[-1]]
 
+    def inc_last_key(self):
+        '''Ŕeturns a new key with the last one increased.
+
+        .. caution::
+            The new key might be meaningless (value above maximum possible)
+        '''
+        return self.change_last_key(self.__dict__[self.key_order[-1]] + 1)
+
+    def change_last_key(self, new_val):
+        args = []
+        for key in self.key_order:
+            args.append(self.__dict__[key])
+        args[-1] += new_val
+        return Key(self.key_order, *args)
+
     def __str__(self):
         str_ = 'Keys: ' + '/'.join(self.key_order)
         str_ += ' Values: ' + '/'.join([repr(self.__dict__[x])
@@ -42,13 +57,15 @@ class Schema(metaclass=abc.ABCMeta):
     '''A Database schema
 
     :param granularity: Record granularity
+    :param val_type: Type of the values
 
     Granularity indicates how many positions a node can store. A sparse
     database will hold at most those. A non-sparse database will hold
     precisely those (save for the very last node).
     '''
-    def __init__(self, granularity):
+    def __init__(self, granularity, val_type):
         self.granularity = granularity
+        self.val_type = val_type
 
     @abc.abstractmethod
     def enumerate_node_keys(self):
@@ -103,8 +120,20 @@ class Node:
         self.to_write = to_write
         self.key = key
         self.partial_name = db.schema.get_partial_node_for_key(key)
+        self.node_file = os.sep.join([self.db.base_dir,
+                                     self.partial_name])
+        self. node_dir = os.sep.join(self.node_file.split(os.sep)[:-1])
         if to_write:
             self._vals = [None] * db.schema.granularity
+        else:
+            f = bz2.open(self.node_file, 'wt', encoding='utf=8')
+            if self.db.is_sparse:
+                pos_line = f.readline().rstrip()
+                self._poses = [int(x) for x in pos_line.split(' ')]
+                self._vals = []
+                for l in f:
+                    self.vals.append(self.db.schema.val_type(l.rstrip()))
+            f.close()
 
     def assign(self, last_index_position, value):
         if not self.to_write:
@@ -115,14 +144,11 @@ class Node:
     def commit(self):
         if not self.to_write:
             raise DBException('Need to be in write mode to commit')
-        node_file = os.sep.join([self.db.base_dir,
-                                self.partial_name])
-        node_dir = os.sep.join(node_file.split(os.sep)[:-1])
         try:
-            os.makedirs(node_dir)
+            os.makedirs(self.node_dir)
         except FileExistsError:
             pass  # This is ok
-        w = bz2.open(node_file + '.tmp', 'wt', encoding='utf-8')
+        w = bz2.open(self.node_file + '.tmp', 'wt', encoding='utf-8')
         start_pos = self.key.get_last_key()
         if self.db.is_sparse:
             poses = []
@@ -139,7 +165,17 @@ class Node:
             for v in self._vals:
                 w.write('%s\n' % repr(v))
         w.close()
-        os.rename(node_file + '.tmp', node_file)
+        os.rename(self.node_file + '.tmp', self.node_file)
+
+    def get_values(self):
+        if self.db.schema.is_sparse:
+            for pos, val in zip(self._poses, self._vals):
+                yield self.key.change_last_key(pos), val
+        else:
+            key = self.key
+            for val in self._vals:
+                yield key, val
+                key = key.inc_last_key()
 
     def __str__(self):
         str_ = 'DB/Schema: ' + '/'.join([self.db.base_dir,
@@ -168,3 +204,10 @@ class DB:
 
     def find_missing_nodes(self):
         pass
+
+    def get_values(self):
+        node_keys = self.schema.enumerate_node_keys()
+        for key in node_keys:
+            node = Node(self, False, key)
+            for pos, value in node.get_values():
+                yield pos, value
