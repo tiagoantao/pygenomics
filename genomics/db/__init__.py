@@ -79,8 +79,8 @@ class Schema(metaclass=abc.ABCMeta):
 
 
 class GenomeSchema(Schema):
-    def __init__(self, granularity, genome):
-        Schema.__init__(self, granularity)
+    def __init__(self, granularity, val_type, genome):
+        Schema.__init__(self, granularity, val_type)
         self.genome = genome
         self.type = 'Genome'
 
@@ -126,13 +126,13 @@ class Node:
         if to_write:
             self._vals = [None] * db.schema.granularity
         else:
-            f = bz2.open(self.node_file, 'wt', encoding='utf=8')
+            f = bz2.open(self.node_file, 'rt', encoding='utf=8')
             if self.db.is_sparse:
                 pos_line = f.readline().rstrip()
-                self._poses = [int(x) for x in pos_line.split(' ')]
+                self._poses = [int(x) for x in pos_line.split('\t')]
                 self._vals = []
                 for l in f:
-                    self.vals.append(self.db.schema.val_type(l.rstrip()))
+                    self._vals.append(self.db.schema.val_type(l.rstrip()))
             f.close()
 
     def assign(self, last_index_position, value):
@@ -168,7 +168,7 @@ class Node:
         os.rename(self.node_file + '.tmp', self.node_file)
 
     def get_values(self):
-        if self.db.schema.is_sparse:
+        if self.db.is_sparse:
             for pos, val in zip(self._poses, self._vals):
                 yield self.key.change_last_key(pos), val
         else:
