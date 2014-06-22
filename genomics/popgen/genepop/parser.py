@@ -89,6 +89,9 @@ class Record(object):
         self.stack = []
 
     def __iter__(self):
+        return self
+
+    def __next__(self):
         for handle in [self.stack, self.handle]:
             for line in handle:
                 line = line.rstrip()
