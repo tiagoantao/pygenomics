@@ -10,7 +10,7 @@
 
 '''
 import importlib
-import json
+import pickle
 import os
 import tempfile
 
@@ -19,16 +19,16 @@ import genomics
 mr_dir = genomics.cfg.mr_dir
 
 
-def json_in(datum):
+def pickle_in(datum):
     w = tempfile.NamedTemporaryFile(dir=mr_dir, delete=False)
-    json.dump(datum, w)
+    pickle.dump(datum, w)
     w.close()
     return w.name
 
 
 def do_map(pname):
     f = open(pname, 'rb')
-    paras = json.load(f, encoding='bytes')
+    paras = pickle.load(f, encoding='bytes')
     f.close()
     fqdn_name = paras[0]
     fqdn_toks = fqdn_name.split('.')
