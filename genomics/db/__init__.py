@@ -43,7 +43,7 @@ class Key:
         args = []
         for key in self.key_order:
             args.append(self.__dict__[key])
-        args[-1] += new_val
+        args[-1] = new_val
         return Key(self.key_order, *args)
 
     def __str__(self):
