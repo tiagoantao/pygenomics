@@ -54,8 +54,11 @@ def to_genepop(plink_pref, gp_pref, pop_dict, header="plink2gp"):
         toks = l.rstrip().replace(" ", "\t").split("\t")
         fam = toks[0]
         id = toks[1]
-        myPops = indivPops[(fam, id)]
-        for pop in myPops:
+        try:
+            my_pops = indivPops[(fam, id)]
+        except KeyError:
+            continue  # Not to be processed
+        for pop in my_pops:
             ws[pop].write("%s/%s," % (fam, id))
             alleles = toks[6:]
             for i in range(len(alleles) // 2):
