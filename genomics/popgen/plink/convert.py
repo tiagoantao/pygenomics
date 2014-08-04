@@ -113,16 +113,35 @@ def to_ldhat(plink_pref, ld_sites, ld_locs):
         ninds += 1
     f.close()
     f = open(plink_pref + '.ped')
-    w = open(ld_sites, 'w')
-    w.write('%d %d 2\n' % (ninds * 2, len(poses)))
+    all_alleles = []
+    start = True
     for l in f:
         toks = l.rstrip().replace(" ", "\t").split("\t")
         ind = toks[1]
-        a1s = toks[6::2]
-        a2s = toks[7::2]
-        w.write('>%s_1\n' % ind)
-        w.write(''.join(a1s) + '\n')
-        w.write('>%s_2\n' % ind)
-        w.write(''.join(a2s) + '\n')
+        alleles = toks[6:]
+        for i in range(len(alleles) // 2):
+            my_alleles = set([alleles[2 * i], alleles[2 * i + 1]])
+            if start:
+                all_alleles.append(my_alleles)
+            else:
+                all_alleles[i] |= my_alleles
+        start = False
+    f.close()
+    f = open(plink_pref + '.ped')
+    w = open(ld_sites, 'w')
+    w.write('%d %d 2\n' % (ninds, len(poses)))
+    for l in f:
+        toks = l.rstrip().replace(" ", "\t").split("\t")
+        ind = toks[1]
+        alleles = toks[6:]
+        w.write('>%s\n' % ind)
+        for i in range(len(alleles) // 2):
+            a1 = alleles[2 * i]
+            a2 = alleles[2 * i + 1]
+            if a1 != a2:
+                w.write('2')
+            else:
+                w.write('0' if a1 == min(all_alleles[i]) else '1')
+        w.write('\n')
     w.close()
     f.close()
