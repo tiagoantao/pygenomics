@@ -86,3 +86,43 @@ def to_genepop(plink_pref, gp_pref, pop_dict, header="plink2gp"):
         f.close()
         os.remove(str(os.getpid()) + "_" + pop)
     wGP.close()
+
+
+def to_ldhat(plink_pref, ld_sites, ld_locs):
+    '''Converts a PED/MAP PLINK file to genepop.
+
+    :param plink_pref: PLINK prefix
+    :param ld_sites: LD sites file
+    :param ld_sites: LD locs file
+    '''
+    f = open(plink_pref + ".map")
+    poses = []
+    w = open(ld_locs, 'w')
+    for l in f:
+        toks = l.rstrip().replace(" ", "\t").split("\t")
+        pos = int(toks[3])
+        poses.append(pos / 1000)
+    f.close()
+    w.write('%d %d L\n' % (len(poses), poses[-1] + 1))
+    w.write('\n'.join([str(pos) for pos in poses]) + '\n')
+    w.close()
+
+    f = open(plink_pref + '.ped')
+    ninds = 0
+    for l in f:
+        ninds += 1
+    f.close()
+    f = open(plink_pref + '.ped')
+    w = open(ld_sites, 'w')
+    w.write('%d %d 2\n' % (ninds * 2, len(poses)))
+    for l in f:
+        toks = l.rstrip().replace(" ", "\t").split("\t")
+        ind = toks[1]
+        a1s = toks[6::2]
+        a2s = toks[7::2]
+        w.write('>%s_1\n' % ind)
+        w.write(''.join(a1s) + '\n')
+        w.write('>%s_2\n' % ind)
+        w.write(''.join(a2s) + '\n')
+    w.close()
+    f.close()
