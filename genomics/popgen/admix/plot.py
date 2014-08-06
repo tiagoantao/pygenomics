@@ -42,7 +42,7 @@ def single(components, cluster, **kwargs):
     all_ind_names = []
     for name, inds in cluster:
         all_ind_ks.extend([components[ind] for ind in inds])
-        all_ind_names.extend([ind[1] for ind in inds])
+        all_ind_names.extend([ind for ind in inds])
     nks = len(all_ind_ks[0])
 
     def draw_row(sp, row_inds, start_ind, inds_row, ind_names):
