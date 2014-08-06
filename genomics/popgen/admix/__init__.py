@@ -9,3 +9,59 @@
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 
 '''
+
+from collections import OrderedDict
+
+import numpy as np
+from scipy.spatial import distance
+from scipy.cluster import hierarchy
+
+
+def _get_cluster(components, my_inds=None):
+    if my_inds is None:
+        my_inds = list(components.keys())
+    dist = distance.pdist([components[ind] for ind in my_inds])
+    hcomp = hierarchy.complete(dist)
+    ll = hierarchy.leaves_list(hcomp)
+    return ll
+
+
+def cluster(components, pop_ind=None):
+    '''Cluster of admixture results.
+     Parameters:
+        - components  - ordered dict individual -> components
+        - pop_ind     - (pop, [individuals])
+
+        if pop_ind is None then all individuals are clustered
+          irrespective of population
+        if pop_ind is used then all individuals will be clustered
+          inside their populations and the populations will be clustered,
+          the new population order will be returned
+    '''
+    if pop_ind is None:
+        return _get_cluster(components)
+    lls = {}
+    recluster = OrderedDict()
+    pop_small = {}
+    for i, (pop, inds) in enumerate(pop_ind):
+        lls[pop] = _get_cluster(components, inds)
+        recluster[pop + '1'] = components[inds[lls[pop][0]]]
+        recluster[pop + '2'] = components[inds[lls[pop][-1]]]
+        pop_small[2 * i] = pop
+        pop_small[2 * i + 1] = pop
+    order = _get_cluster(recluster)
+    pop_order = []
+    for ind in order:
+        pop = pop_small[ind]
+        if pop not in pop_order:
+            pop_order.append(pop)
+        if len(pop_order) == len(pop_ind):
+            break
+    pop_ind_reorder = []
+    for pop in pop_order:
+        for pop2, inds in pop_ind:
+            if pop2 == pop:
+                break
+        ll = lls[pop]
+        pop_ind_reorder.append((pop, [inds[i] for i in ll]))
+    return pop_ind_reorder
