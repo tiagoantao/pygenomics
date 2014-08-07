@@ -12,7 +12,6 @@
 
 from collections import OrderedDict
 
-import numpy as np
 from scipy.spatial import distance
 from scipy.cluster import hierarchy
 
@@ -30,7 +29,7 @@ def cluster(components, pop_ind=None):
     '''Cluster of admixture results.
      Parameters:
         - components  - ordered dict individual -> components
-        - pop_ind     - (pop, [individuals])
+        - pop_ind     - ordered dict pop -> [individuals]
 
         if pop_ind is None then all individuals are clustered
           irrespective of population
@@ -43,7 +42,8 @@ def cluster(components, pop_ind=None):
     lls = {}
     recluster = OrderedDict()
     pop_small = {}
-    for i, (pop, inds) in enumerate(pop_ind):
+    for i, pop in enumerate(pop_ind):
+        inds = pop_ind[pop]
         lls[pop] = _get_cluster(components, inds)
         recluster[pop + '1'] = components[inds[lls[pop][0]]]
         recluster[pop + '2'] = components[inds[lls[pop][-1]]]
@@ -57,11 +57,11 @@ def cluster(components, pop_ind=None):
             pop_order.append(pop)
         if len(pop_order) == len(pop_ind):
             break
-    pop_ind_reorder = []
+    pop_ind_reorder = OrderedDict()
     for pop in pop_order:
-        for pop2, inds in pop_ind:
+        for pop2, inds in pop_ind.items():
             if pop2 == pop:
                 break
         ll = lls[pop]
-        pop_ind_reorder.append((pop, [inds[i] for i in ll]))
+        pop_ind_reorder[pop] = [inds[i] for i in ll]
     return pop_ind_reorder
