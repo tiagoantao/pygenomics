@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+'''
 .. module:: genomics.popgen.admix.plot
    :synopsis: Admixture plot
    :noindex:
@@ -7,7 +7,7 @@
    :license: GNU Affero General Public License, see LICENSE for details
 
 .. moduleauthor:: Tiago Antao <tiago@popgen.net>
-"""
+'''
 
 import math
 
@@ -27,24 +27,26 @@ def _get_defaults(add_ax=True, **kwargs):
         else:
             ax = fig.add_subplot(1, 1, 1)
     else:
-        ax = kwargs.get("ax", None)
+        ax = kwargs.get('ax', None)
     return fig, ax
 
 
 def single(components, cluster, nrows=1, with_names=False,
-           with_pop_labels=True, **kwargs):
-    """Plots Admixture.
+           with_pop_labels=True,
+           colors=['r', 'g', '0.25', 'b', 'y', '0.75', 'm', 'c', '0.5', 'k',
+                   '#ffebcd', '#0000cd', '#006400', '#daa520', '#b22222',
+                   '#ff4500', '#a020f0', '#abcdef', '#987654', '#1166ff'],
+           **kwargs):
+    '''Plots Admixture.
 
     Parameters:
-        - components  - dict individual -> components
-        - cluster     - list of tuple (cluster, [individuals])
-    """
+        - components      - dict individual -> components
+        - cluster         - list of tuple (cluster, [individuals])
+        - with_pop_labels - print pop labels
+    '''
     fig, ax = _get_defaults(**kwargs)
-    nrows = kwargs.get("nrows", 1)
-    with_names = kwargs.get("with_names", False)
-    colors = ["r", "g", "0.25", "b", "y", "0.75", "m", "c", "0.5", "k",
-              "#ffebcd", "#0000cd", "#006400", "#daa520", "#b22222",
-              "#ff4500", "#a020f0", "#abcdef", "#987654", "#1166ff"]
+    nrows = kwargs.get('nrows', 1)
+    with_names = kwargs.get('with_names', False)
     all_ind_ks = []
     all_ind_names = []
     for name, inds in cluster.items():
@@ -63,7 +65,7 @@ def single(components, cluster, nrows=1, with_names=False,
                 i += 1
         sp.bar(range(len(row_inds)),
                [i % 2 == 0 for i in range(len(row_inds))],
-               color="white", alpha=0.4, lw=0, width=1)
+               color='white', alpha=0.4, lw=0, width=1)
         pos = 0
         for name, inds in cluster.items():
             pos += len(inds)
@@ -72,21 +74,21 @@ def single(components, cluster, nrows=1, with_names=False,
             elif pos < start_ind:
                 continue
             if with_pop_labels:
-                sp.text(pos - start_ind, 0.5, name, ha="right", va="center",
-                        rotation="vertical",
-                        fontsize=kwargs.get("popfontsize", "small"),
-                        backgroundcolor="white")
-            sp.axvline(pos - start_ind, color="black", lw=0.5)
+                sp.text(pos - start_ind, 0.5, name, ha='right', va='center',
+                        rotation='vertical',
+                        fontsize=kwargs.get('popfontsize', 'small'),
+                        backgroundcolor='white')
+            sp.axvline(pos - start_ind, color='black', lw=0.5)
         sp.set_ylim(0, 1.0)
         sp.set_xlim(0, inds_row + 1)
         if with_names:
             pos = 0
             for name in ind_names:
-                sp.text(pos, 1.0, name, ha="left", va="top",
-                        rotation="vertical",
+                sp.text(pos, 1.0, name, ha='left', va='top',
+                        rotation='vertical',
                         alpha=0.5,
-                        fontsize=kwargs.get("indfontsize", "small"),
-                        backgroundcolor="white")
+                        fontsize=kwargs.get('indfontsize', 'small'),
+                        backgroundcolor='white')
                 pos += 1
 
     inds_row = math.ceil(len(all_ind_ks) / nrows)
@@ -109,26 +111,33 @@ def single(components, cluster, nrows=1, with_names=False,
     return fig
 
 
-def stacked(k_components, cluster, fig, **kwargs):
-    """Plots stacked admixture plots in increasing order of K.
+def stacked(k_components, cluster, fig, k_colors={}, **kwargs):
+    '''Plots stacked admixture plots in increasing order of K.
 
     Parameters:
         - k_components  - dict k -> (dict individual -> components)
         - cluster       - list of tuple (cluster, [individuals])
-    """
+        - fig           - matplotlib figure
+        - k_colors      - color per K (can be incomplete)
+    '''
     fig.clf()
     ks = list(k_components.keys())
     ks.sort()
     for i, k in enumerate(ks):
         ax = fig.add_subplot(len(ks), 1, i + 1)
-        single(k_components[k], cluster, fig=fig, ax=ax,
-               with_pop_labels=False)
+        if k in k_colors:
+            single(k_components[k], cluster, fig=fig, ax=ax,
+                   colors=k_colors[k],
+                   with_pop_labels=False)
+        else:
+            single(k_components[k], cluster, fig=fig, ax=ax,
+                   with_pop_labels=False)
 
     pos = 0
     for name, inds in cluster.items():
         pos += len(inds)
-        ax.text(pos, 0.0, name, ha="right", va="bottom",
-                rotation="vertical",
-                fontsize=kwargs.get("popfontsize", "small"),
-                backgroundcolor="white")
+        ax.text(pos, 0.0, name, ha='right', va='bottom',
+                rotation='vertical',
+                fontsize=kwargs.get('popfontsize', 'small'),
+                backgroundcolor='white')
     fig.tight_layout()
