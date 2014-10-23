@@ -28,7 +28,7 @@ def to_smartpca(gp_f, ind_w, snp_w, geno_w):
     alleles_loci = [set() for x in gph.loci_list]
 
     pop_names = {}
-    for rec in gph:
+    for rec in next(gph):
         if rec == ():
             pop += 1
             continue
@@ -52,7 +52,7 @@ def to_smartpca(gp_f, ind_w, snp_w, geno_w):
                 if allele is None:
                     pca_indiv.append(9)
                 elif allele == alt_allele:
-                    pca_indiv.append(2)
+                    pca_indiv.append(1)
                 else:
                     pca_indiv.append(0)
         return pca_indiv
