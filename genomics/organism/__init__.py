@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 '''
-.. module:: organism
+.. module:: genomics.organism
    :synopsis: Meta-data for organisms
    :copyright: Copyright 2014 by Tiago Antao
    :license: GNU Affero, see LICENSE for details
