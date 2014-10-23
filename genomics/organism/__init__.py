@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
-"""
-.. module:: genomics.organism
-    :synopsis: A library for modern population genomics analysis
-    :noindex:
-    :copyright: Copyright 2013 by Tiago Antao
-    :license: GNU Affero General Public License, see LICENSE for details
+'''
+.. module:: organism
+   :synopsis: Meta-data for organisms
+   :copyright: Copyright 2014 by Tiago Antao
+   :license: GNU Affero, see LICENSE for details
 
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 
-"""
+'''
 from enum import Enum
 
-from Bio import SeqIO
-
-CentroPos = Enum('CentroPos', 'left right center')
-'''Centromere position'''
+CentroPos = Enum('CentroPos', 'left right center unknown')
 
 
 class Genome:
@@ -27,14 +23,8 @@ class Genome:
         self.chrom_order = []
 
     def add_chrom(self, chrom, size):
-        '''Adds a chromosome to the database'''
         self.chroms[chrom] = size
         self.chrom_order.append(chrom)
-
-    def get_reference(self, f):
-        '''Gets chromosomal information from a reference file'''
-        for record in SeqIO.parse(f, "fasta"):
-            self.chroms[record.id] = len(record.seq)
 
     def __str__(self):
         my_str = 'Species: %s (%s, taxid: %d)\n' % (self.name,
@@ -45,11 +35,11 @@ class Genome:
         my_str += '%s\n' % str(self.chroms)
         return my_str
 
+
+# Down: to remove, specific
+
 genome_db = {}
-
-#Preloaded genomes
-
-ag = Genome('Anopheles gambiae PEST v3', 'Ag', 180454, 'Ag PEST v3')
+ag = Genome('Anopheles gambiae PEST', 'Ag', 180454, 'Ag PEST')
 
 ag.chroms = {
     '2L': (49364325, CentroPos.left),
