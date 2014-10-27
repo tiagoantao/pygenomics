@@ -18,6 +18,15 @@ import matplotlib.pyplot as plt
 
 from .. import organism
 
+def get_defaults(add_ax=True, **kwargs):
+    '''Gets defaults for figure and ax if they are not on kwargs.'''
+    fig = kwargs.get("fig", plt.figure(figsize=(15, 8)))
+    if add_ax:
+        ax = kwargs.get("ax", fig.add_subplot(1, 1, 1))
+    else:
+        ax = None
+    return fig, ax
+
 
 class GenomePlot:
     """A Genome plot.
