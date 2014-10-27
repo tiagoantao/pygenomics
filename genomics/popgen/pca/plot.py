@@ -10,6 +10,7 @@
 
 from genomics.plot import get_defaults
 
+
 def render_pca(indivs, weights, comp1=1, comp2=2, **kwargs):
     """Plots a PCA.
 
@@ -80,6 +81,6 @@ def render_pca(indivs, weights, comp1=1, comp2=2, **kwargs):
             ax.plot(x, y, markers[cnt // 7], label=group)
             cnt += 1
         ax.legend(loc="right")
-        xmin, xmax = pylab.xlim()
+        xmin, xmax = ax.get_xlim()
         ax.set_xlim(xmin, xmax + 0.1 * (xmax - xmin))  # space for legend
-    return ax
+    return fig, ax

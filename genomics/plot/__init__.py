@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 
 from .. import organism
 
+
 def get_defaults(add_ax=True, **kwargs):
     '''Gets defaults for figure and ax if they are not on kwargs.'''
     fig = kwargs.get("fig", plt.figure(figsize=(15, 8)))
