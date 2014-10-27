@@ -8,27 +8,28 @@
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 '''
 
+import matplotlib.pyplot as plt
+
 from genomics.plot import get_defaults
 
 
-def render_pca(indivs, weights, comp1=1, comp2=2, **kwargs):
+def render_pca(indivs, comp1=1, comp2=2,
+               weights=None, cluster=None, gray=[], tag_indivs=[],
+               **kwargs):
     '''Plots two components of PCA.
 
     If the cluster is empty, it will plot the name of the individual
 
     Parameters:
         - indivs     - dict individual -> coordinates
-        - weights    - PCA weights (relative or absolute)
         - comp1      - First component to plot (starts at 1)
         - comp2      - Second component to plot
         - cluster    - dict individual -> cluster
+        - weights    - PCA weights (relative or absolute)
         - gray       - List of clusters to "gray out" (requires cluster)
         - tag_indivs - List of individuals to tag (requires cluster)
     '''
     comp_cluster = {}
-    cluster = kwargs.get("cluster", None)
-    tag_indivs = kwargs.get("tag_indivs", [])
-    gray = kwargs.get("gray", [])
     if cluster is not None:
         groups = list(set(cluster.values()))
         groups.sort()
@@ -40,8 +41,9 @@ def render_pca(indivs, weights, comp1=1, comp2=2, **kwargs):
         ax.set_xlabel('PC %d' % comp1)
         ax.set_ylabel('PC %d' % comp2)
     else:
-        ax.set_xlabel('PC %d (%.1f)' % (comp1, 100 * weights[comp1 - 1]))
-        ax.set_ylabel('PC %d (%.1f)' % (comp2, 100 * weights[comp2 - 1]))
+        my_weights = [100 * w / sum(weights) for w in weights]
+        ax.set_xlabel('PC %d (%.1f)' % (comp1, my_weights[comp1 - 1]))
+        ax.set_ylabel('PC %d (%.1f)' % (comp2, my_weights[comp2 - 1]))
     xmin, xmax, ymin, ymax = (float('inf'), float('-inf'),
                               float('inf'), float('-inf'))
     for indiv, indiv_comps in indivs.items():
@@ -84,7 +86,9 @@ def render_pca(indivs, weights, comp1=1, comp2=2, **kwargs):
     return fig, ax
 
 
-def render_pca_eight(indivs, **kwargs):
+def render_pca_eight(indivs,
+                     weights=None, cluster=None, gray=[], tag_indivs=[],
+                     **kwargs):
     '''Plots eight components of PCA.
 
     PC1 and PC2 have a special chart.
@@ -92,23 +96,22 @@ def render_pca_eight(indivs, **kwargs):
 
     Parameters:
         - indivs     - dict individual -> coordinates
+        - weights    - PCA weights (relative or absolute)
         - cluster    - dict individual -> cluster
         - gray       - List of clusters to "gray out" (requires cluster)
         - tag_indivs - List of individuals to tag (requires cluster)
     '''
     comp_cluster = [{} for i in range(4)]
-    cluster = kwargs.get("cluster", None)
-    tag_indivs = kwargs.get("tag_indivs", [])
-    gray = kwargs.get("gray", [])
     if cluster is not None:
         groups = list(set(cluster.values()))
         groups.sort()
         for group in groups:
-            comp_cluster[group] = []
+            for i in range(4):
+                comp_cluster[i][group] = []
 
     if 'figsize' not in kwargs:
         kwargs['figsize'] = 16, 9
-    fig, ax_ = get_defaults(**kwargs)  # we ignore ax_
+    fig, ax_ = get_defaults(add_ax=False, **kwargs)  # we ignore ax_
     lims = []
     for i in range(4):
         #  xmin, xmax, ymin, ymax
@@ -122,7 +125,7 @@ def render_pca_eight(indivs, **kwargs):
     for indiv, indiv_comps in indivs.items():
         for i in range(4):
             xmin, xmax, ymin, ymax = lims[i]
-            x, y = indiv_comps[i * 4], indiv_comps[i * 4 + 1]
+            x, y = indiv_comps[i * 2], indiv_comps[i * 2 + 1]
             if y < ymin:
                 ymin = y
             if y > ymax:
@@ -136,14 +139,24 @@ def render_pca_eight(indivs, **kwargs):
                 ax.text(x, y, indiv)
             if cluster is not None:
                 group = cluster[indiv]
-                comp_cluster[group].append((x, y))
+                comp_cluster[i][group].append((x, y))
+    if weights is not None:
+        my_weights = [100 * w / sum(weights) for w in weights]
     for i in range(4):
         ax = axs[i]
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
         xmin, xmax, ymin, ymax = lims[i]
-        if cluster is None:
-            ax.set_xlim(xmin, xmax)
-            ax.set_ylim(ymin, ymax)
-        else:
+        if weights is not None:
+            ax.text(xmin, ymin, 'PC %d (%.1f)' % (i * 2 + 1,
+                                                  my_weights[i * 2]),
+                    va='bottom')
+            ax.text(xmax, ymax, 'PC %d (%.1f)' % (i * 2 + 2,
+                                                  my_weights[i * 2 + 1]),
+                    ha='right', rotation='vertical', va='top')
+        ax.set_xlim(xmin, xmax)
+        ax.set_ylim(ymin, ymax)
+        if cluster is not None:
             for group in gray:
                 if len(comp_cluster[group]) == 0:
                     continue
@@ -154,9 +167,15 @@ def render_pca_eight(indivs, **kwargs):
             for group in groups:
                 if group in gray:
                     continue
-                if len(comp_cluster[group]) == 0:
+                if len(comp_cluster[i][group]) == 0:
                     continue
-                x, y = zip(*comp_cluster[group])
+                x, y = zip(*comp_cluster[i][group])
                 ax.plot(x, y, markers[cnt // 7], label=group)
                 cnt += 1
+    if cluster is not None:
+        handles, labels = axs[-2].get_legend_handles_labels()
+        axs[-1].legend(handles, labels, loc='center')
+    axs[-1].get_xaxis().set_visible(False)
+    axs[-1].get_yaxis().set_visible(False)
+    plt.tight_layout(h_pad=0, w_pad=0)
     return fig, axs
