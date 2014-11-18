@@ -39,7 +39,41 @@ class Genome:
 # Down: to remove, specific
 
 genome_db = {}
-ag = Genome('Anopheles gambiae PEST', 'Ag', 180454, 'Ag PEST')
+
+# Homo sapiens build 37
+hs37 = Genome('Homo sapiens build 37', 'Ag', 9606, 'Hs b37')
+
+hs37.chroms = {
+    1: 249250621,
+    2: 243199373,
+    3: 198022430,
+    4: 191154276,
+    5: 180915260,
+    6: 171115067,
+    7: 159138663,
+    8: 146364022,
+    9: 141213431,
+    10: 135534747,
+    11: 135006516,
+    12: 133851895,
+    13: 115169878,
+    14: 107349540,
+    15: 102531392,
+    16: 90354753,
+    17: 81195210,
+    18: 78077248,
+    19: 59128983,
+    20: 63025520,
+    21: 48129895,
+    22: 51304566,
+    'X': 155270560,
+    'Y': 59373566
+}
+
+genome_db['Hs37'] = hs37
+
+# Anopheles gambiae PEST reference 3.7
+ag = Genome('Anopheles gambiae PEST 3.7', 'Ag', 180454, 'Ag PEST')
 
 ag.chroms = {
     '2L': (49364325, CentroPos.left),
