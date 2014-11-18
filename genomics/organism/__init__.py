@@ -19,8 +19,8 @@ class Genome:
         self.short_name = short_name
         self.taxid = taxid
         self.desc = desc
-        self.chroms = {}
         self.chrom_order = []
+        self.chroms = {}
 
     def add_chrom(self, chrom, size):
         self.chroms[chrom] = size
@@ -35,7 +35,7 @@ class Genome:
         self._chroms = chroms
         if len(self.chrom_order) == 0:
             keys = list(chroms.keys())
-            keys.sort()
+            keys.sort(key=lambda x: '%04d' % x if type(x) == int else x)
             self.chrom_order = keys
 
     def __str__(self):
