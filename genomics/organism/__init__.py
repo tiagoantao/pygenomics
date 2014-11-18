@@ -41,7 +41,7 @@ class Genome:
 genome_db = {}
 
 # Homo sapiens build 37
-hs37 = Genome('Homo sapiens build 37', 'Ag', 9606, 'Hs b37')
+hs37 = Genome('Homo sapiens build 37', 'Hs', 9606, 'Hs b37')
 
 hs37.chroms = {
     1: 249250621,
