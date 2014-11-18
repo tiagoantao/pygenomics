@@ -8,6 +8,7 @@
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 
 '''
+from copy import deepcopy
 from enum import Enum
 
 CentroPos = Enum('CentroPos', 'left right center unknown')
@@ -46,6 +47,27 @@ class Genome:
         my_str += '%s\n' % str(self.chrom_order)
         my_str += '%s\n' % str(self.chroms)
         return my_str
+
+
+def remove_chromosome(genome, chrom):
+    """Creates a new Genome object with a chromosome removed"""
+    genome = deepcopy(genome)
+    try:
+        del genome.chroms[chrom]
+    except KeyError:
+        pass
+    try:
+        del genome.chrom_order[genome.chrom_order.index(chrom)]
+    except ValueError:
+            pass
+    return genome
+
+
+def remove_sex_chromosomes(genome):
+    """Creates a new Genome object with sex chromosomes removed"""
+    for chrom in ['X', 'Y']:
+        genome = remove_chromosome(genome, chrom)
+    return genome
 
 genome_db = {}
 
