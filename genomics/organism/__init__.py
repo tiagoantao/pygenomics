@@ -26,6 +26,18 @@ class Genome:
         self.chroms[chrom] = size
         self.chrom_order.append(chrom)
 
+    @property
+    def chroms(self):
+        return self._chroms
+
+    @chroms.setter
+    def chroms(self, chroms):
+        self._chroms = chroms
+        if len(self.chrom_order) == 0:
+            keys = list(chroms.keys())
+            keys.sort()
+            self.chrom_order = keys
+
     def __str__(self):
         my_str = 'Species: %s (%s, taxid: %d)\n' % (self.name,
                                                     self.short_name,
@@ -35,39 +47,36 @@ class Genome:
         my_str += '%s\n' % str(self.chroms)
         return my_str
 
-
-# Down: to remove, specific
-
 genome_db = {}
 
 # Homo sapiens build 37
 hs37 = Genome('Homo sapiens build 37', 'Hs', 9606, 'Hs b37')
 
 hs37.chroms = {
-    1: 249250621,
-    2: 243199373,
-    3: 198022430,
-    4: 191154276,
-    5: 180915260,
-    6: 171115067,
-    7: 159138663,
-    8: 146364022,
-    9: 141213431,
-    10: 135534747,
-    11: 135006516,
-    12: 133851895,
-    13: 115169878,
-    14: 107349540,
-    15: 102531392,
-    16: 90354753,
-    17: 81195210,
-    18: 78077248,
-    19: 59128983,
-    20: 63025520,
-    21: 48129895,
-    22: 51304566,
-    'X': 155270560,
-    'Y': 59373566
+    1: (249250621, CentroPos.center),
+    2: (243199373, CentroPos.center),
+    3: (198022430, CentroPos.center),
+    4: (191154276, CentroPos.center),
+    5: (180915260, CentroPos.center),
+    6: (171115067, CentroPos.center),
+    7: (159138663, CentroPos.center),
+    8: (146364022, CentroPos.center),
+    9: (141213431, CentroPos.center),
+    10: (135534747, CentroPos.center),
+    11: (135006516, CentroPos.center),
+    12: (133851895, CentroPos.center),
+    13: (115169878, CentroPos.right),
+    14: (107349540, CentroPos.right),
+    15: (102531392, CentroPos.right),
+    16: (90354753, CentroPos.center),
+    17: (81195210, CentroPos.center),
+    18: (78077248, CentroPos.center),
+    19: (59128983, CentroPos.center),
+    20: (63025520, CentroPos.right),
+    21: (48129895, CentroPos.center),
+    22: (51304566, CentroPos.right),
+    'X': (155270560, CentroPos.center),
+    'Y': (59373566, CentroPos.right)
 }
 
 genome_db['Hs37'] = hs37
