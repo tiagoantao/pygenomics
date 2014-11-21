@@ -102,7 +102,7 @@ hs37.chroms = {
     '18': (78077248, CentroPos.center),
     '19': (59128983, CentroPos.center),
     '20': (63025520, CentroPos.right),
-    '21': (48129895, CentroPos.center),
+    '21': (48129895, CentroPos.left),
     '22': (51304566, CentroPos.right),
     'X': (155270560, CentroPos.center),
     'Y': (59373566, CentroPos.right)
