@@ -74,7 +74,6 @@ class GridGenomePlot(GenomePlot):
             if size > self.max_size:
                 self.max_size = size
         for chrom in chroms:
-            print(nrows, ncols, chrom, i)
             size, centro = genome.chroms[chrom]
             if chrom == chroms[0]:  # start
                 self.features[chrom] = self.fig.add_subplot(nrows, ncols, i,
