@@ -74,20 +74,25 @@ class GridGenomePlot(GenomePlot):
             if size > self.max_size:
                 self.max_size = size
         for chrom in chroms:
+            print(nrows, ncols, chrom, i)
             size, centro = genome.chroms[chrom]
             if chrom == chroms[0]:  # start
                 self.features[chrom] = self.fig.add_subplot(nrows, ncols, i,
-                                                            frame_on=False)
+                                                            frame_on=True)
                 self.features[chrom].get_yaxis().tick_left()
             else:
                 self.features[chrom] = self.fig.add_subplot(
-                    nrows, ncols, i, frame_on=False,
+                    nrows, ncols, i, frame_on=True,
                     sharey=self.features[chroms[0]])
                 self.features[chrom].get_yaxis().set_visible(False)
             self.features[chrom].get_xaxis().set_visible(False)
             if centro == organism.CentroPos.center:
-                start = - self.max_size // 2 + size // 2
-                self.features[chrom].set_xlim(start, -start)
+                diff = self.max_size - size
+                self.features[chrom].set_xlim(-diff // 2,
+                                              self.max_size - diff // 2)
+                self.features[chrom].text(- diff // 2, 1, chrom, va='top',
+                                          ha='left', size='xx-large',
+                                          backgroundcolor='pink')
             elif centro == organism.CentroPos.left:
                 self.features[chrom].set_xlim(1, self.max_size)
                 self.features[chrom].text(self.max_size, 1, chrom, va='top',
