@@ -86,7 +86,7 @@ def render_pca(indivs, comp1=1, comp2=2,
     return fig, ax
 
 
-def render_pca_eight(indivs,
+def render_pca_eight(indivs, title=None,
                      weights=None, cluster=None, gray=[], tag_indivs=[],
                      **kwargs):
     '''Plots eight components of PCA.
@@ -177,5 +177,7 @@ def render_pca_eight(indivs,
         axs[-1].legend(handles, labels, loc='center')
     axs[-1].get_xaxis().set_visible(False)
     axs[-1].get_yaxis().set_visible(False)
+    if title is not None:
+        fig.suptitle(title)
     plt.tight_layout(h_pad=0, w_pad=0)
     return fig, axs
