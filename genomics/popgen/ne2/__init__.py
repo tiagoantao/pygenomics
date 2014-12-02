@@ -6,13 +6,13 @@
    :license: GNU Affero, see LICENSE for details
 
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
-"""
+'''
 
 import pprint
 
 
 class Record:
-    """Holds information from a NeEstimator2 OUTPUT file.
+    '''Holds information from a NeEstimator2 OUTPUT file.
 
     @ivar freqs_used  Frequencies used as a cutoff. The list
                        might include None (no cutoff)
@@ -55,7 +55,8 @@ class Record:
                            Fline
                            Ne
 
-    """
+    '''
+
     def __init__(self):
         self.freqs_used = []
         self.ld = []
@@ -80,9 +81,9 @@ class Record:
             myRep += "\n"
         for elem in self.temporal:
             myRep += "Samples: %d %d\n" % (elem["sampleId1"],
-                     elem["sampleId2"])
+                                           elem["sampleId2"])
             myRep += "Generations: %d %d\n" % (elem["generation1"],
-                     elem["generation2"])
+                                               elem["generation2"])
             for stat, result in elem["results"].items():
                 myRep += stat
                 myRep += " "
