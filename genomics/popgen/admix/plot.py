@@ -36,6 +36,7 @@ def single(components, cluster, nrows=1, with_names=False,
            colors=['r', 'g', '0.25', 'b', 'y', '0.75', 'm', 'c', '0.5', 'k',
                    '#ffebcd', '#0000cd', '#006400', '#daa520', '#b22222',
                    '#ff4500', '#a020f0', '#abcdef', '#987654', '#1166ff'],
+           with_white_bar=False,
            **kwargs):
     '''Plots Admixture.
 
@@ -63,9 +64,10 @@ def single(components, cluster, nrows=1, with_names=False,
             for ind in row_inds:
                 bottoms[i] += ind[k]
                 i += 1
-        sp.bar(range(len(row_inds)),
-               [i % 2 == 0 for i in range(len(row_inds))],
-               color='white', alpha=0.4, lw=0, width=1)
+        if with_white_bar:
+            sp.bar(range(len(row_inds)),
+                   [i % 2 == 0 for i in range(len(row_inds))],
+                   color='white', alpha=0.4, lw=0, width=1)
         pos = 0
         for name, inds in cluster.items():
             pos += len(inds)
