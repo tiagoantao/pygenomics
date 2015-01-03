@@ -9,8 +9,11 @@
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 
 '''
-import configparser
 import os
+try:
+    import configparser as cp
+except:
+    import ConfigParser as cp
 
 config_file = os.path.expanduser('~/.config/pygenomics/main.conf')
 # This can be configured before loading of the main module to read another file
@@ -42,12 +45,12 @@ class Config:
         self.config_file = config_file
 
     def load_config(self):
-        config = configparser.ConfigParser()
+        config = cp.ConfigParser()
         config.read(self.config_file)
-        self.mr_dir = config['main']['mr_dir']
-        self.grid = config['main']['grid']
+        self.mr_dir = config.get('main', 'mr_dir')
+        self.grid = config.get('main', 'grid')
         if self.grid == 'Local':
-            self.grid_limit = config['grid.local']['limit']
+            self.grid_limit = config.get('grid.local', 'limit')
             if self.grid_limit.find('.') > -1:
                 self.grid_limit = float(self.grid_limit)
             else:
