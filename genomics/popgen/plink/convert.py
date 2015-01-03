@@ -148,27 +148,29 @@ def to_ldhat(plink_pref, ld_sites, ld_locs):
 
 
 def to_eigen(plink_pref, eigen_pref):
-    '''Converts a PED/MAP PLINK file to EIGENSOFT ind/snp.
+    '''Converts a PED/MAP 1/2 PLINK file to EIGENSOFT ind/snp/eigenstratgeno.
 
-    :param plink_pref: PLINK prefix
+    :param plink_pref: PLINK prefix (recode12)
     :param eigen_pref: EIGENSOFT prefix
     '''
-    f = open(eigen_pref + '.ped')
+    f = open(plink_pref + '.ped')
     iw = open(eigen_pref + '.ind', 'w')
     snps = {}
     for l in f:
-        toks = l.rstrip().split('\t')
-        indId = toks[0] + '/' + toks[1]
-        iw.write(indId + '\tU\tControl\n')
-        for li in range(len(toks[6:])):
-            a1, a2 = tuple(toks[li + 6].split(' '))
+        toks = l.rstrip().replace(' ', '\t').split('\t')
+        # The above seems to change from plink 1 to 2
+        ind = toks[0] + '/' + toks[1]
+        iw.write(ind + '\tU\tControl\n')
+        for li in range(len(toks[6:]) // 2):
+            a1 = toks[2 * li + 6]
+            a2 = toks[2 * li + 6 + 1]
             if a1 not in ['1', '2'] or a2 not in ['1', '2']:
                 snps[li] = snps.get(li, '') + '9'
             else:
                 snps[li] = snps.get(li, '') + str(int(a1 == '1') + int(a2 == '1'))
     iw.close()
 
-    sw = open(eigen_pref + '.snp', 'w')
+    sw = open(plink_pref + '.snp', 'w')
     f = open(eigen_pref + '.map')
     for l in f:
         toks = l.rstrip().split('\t')
