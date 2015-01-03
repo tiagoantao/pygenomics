@@ -9,3 +9,7 @@
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 
 '''
+
+class SmartPCAController:
+    def __init__(self):
+        pass
