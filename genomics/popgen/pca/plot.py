@@ -15,6 +15,7 @@ from genomics.plot import get_defaults
 
 def render_pca(indivs, comp1=1, comp2=2,
                weights=None, cluster=None, gray=[], tag_indivs=[],
+               markers=None,
                **kwargs):
     '''Plots two components of PCA.
 
@@ -28,6 +29,7 @@ def render_pca(indivs, comp1=1, comp2=2,
         - weights    - PCA weights (relative or absolute)
         - gray       - List of clusters to "gray out" (requires cluster)
         - tag_indivs - List of individuals to tag (requires cluster)
+        - markers    - Markers dictionary (cluster key -> marker)
     '''
     comp_cluster = {}
     if cluster is not None:
@@ -70,24 +72,25 @@ def render_pca(indivs, comp1=1, comp2=2,
                 continue
             x, y = zip(*comp_cluster[group])
             ax.plot(x, y, ".", color="#BBBBBB", label=group)
-        cnt = 0
-        markers = ["o", "+", ","]
+        if markers is None:
+            markers = {}
+            for cnt, group in enumerate(groups):
+                markers[group] = ["o", "+", ","][cnt // 7]
         for group in groups:
             if group in gray:
                 continue
             if len(comp_cluster[group]) == 0:
                 continue
             x, y = zip(*comp_cluster[group])
-            ax.plot(x, y, markers[cnt // 7], label=group)
-            cnt += 1
+            ax.plot(x, y, markers[group], label=group)
         ax.legend(loc="right")
         xmin, xmax = ax.get_xlim()
         ax.set_xlim(xmin, xmax + 0.1 * (xmax - xmin))  # space for legend
     return fig, ax
 
 
-def render_pca_eight(indivs, title=None,
-                     weights=None, cluster=None, gray=[], tag_indivs=[],
+def render_pca_eight(indivs, title=None, weights=None,
+                     cluster=None, gray=[], tag_indivs=[], markers=None,
                      **kwargs):
     '''Plots eight components of PCA.
 
@@ -100,6 +103,7 @@ def render_pca_eight(indivs, title=None,
         - cluster    - dict individual -> cluster
         - gray       - List of clusters to "gray out" (requires cluster)
         - tag_indivs - List of individuals to tag (requires cluster)
+        - markers    - Markers dictionary (cluster key -> marker)
     '''
     comp_cluster = [{} for i in range(4)]
     if cluster is not None:
@@ -162,16 +166,17 @@ def render_pca_eight(indivs, title=None,
                     continue
                 x, y = zip(*comp_cluster[group])
                 ax.plot(x, y, ".", color="#BBBBBB", label=group)
-            cnt = 0
-            markers = ["o", "+", ","]
+            if markers is None:
+                markers = {}
+                for cnt, group in enumerate(groups):
+                    markers[group] = ["o", "+", ","][cnt // 7]
             for group in groups:
                 if group in gray:
                     continue
                 if len(comp_cluster[i][group]) == 0:
                     continue
                 x, y = zip(*comp_cluster[i][group])
-                ax.plot(x, y, markers[cnt // 7], label=group)
-                cnt += 1
+                ax.plot(x, y, markers[group], label=group)
     if cluster is not None:
         handles, labels = axs[-2].get_legend_handles_labels()
         axs[-1].legend(handles, labels, loc='center')
