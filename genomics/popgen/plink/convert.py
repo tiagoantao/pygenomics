@@ -148,7 +148,7 @@ def to_ldhat(plink_pref, ld_sites, ld_locs):
 
 
 def to_eigen(plink_pref, eigen_pref):
-    '''Converts a PED/MAP 1/2 PLINK file to EIGENSOFT ind/snp/eigenstratgeno.
+    '''Converts a PED/MAP 1/2 PLINK file to EIGENSOFT ind/snp/geno.
 
     :param plink_pref: PLINK prefix (recode12)
     :param eigen_pref: EIGENSOFT prefix
@@ -170,8 +170,8 @@ def to_eigen(plink_pref, eigen_pref):
                 snps[li] = snps.get(li, '') + str(int(a1 == '1') + int(a2 == '1'))
     iw.close()
 
-    sw = open(plink_pref + '.snp', 'w')
-    f = open(eigen_pref + '.map')
+    f = open(plink_pref + '.map')
+    sw = open(eigen_pref + '.snp', 'w')
     for l in f:
         toks = l.rstrip().split('\t')
         chro = toks[0]
@@ -179,7 +179,7 @@ def to_eigen(plink_pref, eigen_pref):
     sw.close()
     f.close()
 
-    gw = open(eigen_pref + '.eigenstratgeno', 'w')
+    gw = open(eigen_pref + '.geno', 'w')
     poses = list(snps.keys())
     poses.sort()
     for pos in poses:
