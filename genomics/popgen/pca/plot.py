@@ -14,6 +14,7 @@ from genomics.plot import get_defaults
 
 
 def render_pca(indivs, comp1=1, comp2=2,
+               markers=None, colors=None,
                weights=None, cluster=None, gray=[], tag_indivs=[],
                **kwargs):
     '''Plots two components of PCA.
@@ -70,16 +71,21 @@ def render_pca(indivs, comp1=1, comp2=2,
                 continue
             x, y = zip(*comp_cluster[group])
             ax.plot(x, y, ".", color="#BBBBBB", label=group)
-        cnt = 0
-        markers = ["o", "+", ","]
         for group in groups:
             if group in gray:
                 continue
             if len(comp_cluster[group]) == 0:
                 continue
+            if markers is None:
+                marker = 'o'
+            else:
+                marker = markers[group]
+            if colors is None:
+                color = None
+            else:
+                color = colors[group]
             x, y = zip(*comp_cluster[group])
-            ax.plot(x, y, markers[cnt // 7], label=group)
-            cnt += 1
+            ax.plot(x, y, marker=marker, color=color, label=group, ls=' ')
         ax.legend(loc="right")
         xmin, xmax = ax.get_xlim()
         ax.set_xlim(xmin, xmax + 0.1 * (xmax - xmin))  # space for legend
@@ -88,6 +94,7 @@ def render_pca(indivs, comp1=1, comp2=2,
 
 def render_pca_eight(indivs, title=None,
                      weights=None, cluster=None, gray=[], tag_indivs=[],
+                     markers=None, colors=None,
                      **kwargs):
     '''Plots eight components of PCA.
 
@@ -162,16 +169,21 @@ def render_pca_eight(indivs, title=None,
                     continue
                 x, y = zip(*comp_cluster[group])
                 ax.plot(x, y, ".", color="#BBBBBB", label=group)
-            cnt = 0
-            markers = ["o", "+", ","]
-            for group in groups:
+            for i, group in enumerate(groups):
                 if group in gray:
                     continue
                 if len(comp_cluster[i][group]) == 0:
                     continue
                 x, y = zip(*comp_cluster[i][group])
-                ax.plot(x, y, markers[cnt // 7], label=group)
-                cnt += 1
+                if markers is None:
+                    marker = '.'
+                else:
+                    marker = markers[group]
+                if colors is None:
+                    color = None
+                else:
+                    color = colors[group]
+                ax.plot(x, y, marker=marker, color=color, label=group, ls=' ')
     if cluster is not None:
         handles, labels = axs[-2].get_legend_handles_labels()
         axs[-1].legend(handles, labels, loc='center')
