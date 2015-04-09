@@ -16,7 +16,6 @@ from genomics.plot import get_defaults
 def render_pca(indivs, comp1=1, comp2=2,
                markers=None, colors=None,
                weights=None, cluster=None, gray=[], tag_indivs=[],
-               markers=None,
                **kwargs):
     '''Plots two components of PCA.
 
@@ -81,11 +80,11 @@ def render_pca(indivs, comp1=1, comp2=2,
             if markers is None:
                 marker = 'o'
             else:
-                marker = markers[group]
+                marker = markers.get(group, None)
             if colors is None:
                 color = None
             else:
-                color = colors[group]
+                color = colors.get(group, None)
             x, y = zip(*comp_cluster[group])
             ax.plot(x, y, marker=marker, color=color, label=group, ls=' ')
         ax.legend(loc="right")
@@ -172,7 +171,7 @@ def render_pca_eight(indivs, title=None,
                     continue
                 x, y = zip(*comp_cluster[group])
                 ax.plot(x, y, ".", color="#BBBBBB", label=group)
-            for i, group in enumerate(groups):
+            for group in groups:
                 if group in gray:
                     continue
                 if len(comp_cluster[i][group]) == 0:
@@ -181,11 +180,11 @@ def render_pca_eight(indivs, title=None,
                 if markers is None:
                     marker = '.'
                 else:
-                    marker = markers[group]
+                    marker = markers.get(group, None)
                 if colors is None:
                     color = None
                 else:
-                    color = colors[group]
+                    color = colors.get(group, None)
                 ax.plot(x, y, marker=marker, color=color, label=group, ls=' ')
     if cluster is not None:
         handles, labels = axs[-2].get_legend_handles_labels()
