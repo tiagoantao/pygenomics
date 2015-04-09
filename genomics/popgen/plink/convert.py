@@ -95,13 +95,13 @@ def to_ldhat(plink_pref, ld_sites, ld_locs):
     :param ld_sites: LD sites file
     :param ld_sites: LD locs file
     '''
-    f = open(plink_pref + ".map")
+    f = open(plink_pref + '.map')
     poses = []
     w = open(ld_locs, 'w')
     for l in f:
-        toks = l.rstrip().replace(" ", "\t").split("\t")
-        pos = int(toks[3])
-        poses.append(pos / 1000)
+        toks = l.rstrip().replace(' ', '\t').split('\t')
+        my_pos = int(toks[3])
+        poses.append(my_pos / 1000)
     f.close()
     w.write('%d %d L\n' % (len(poses), poses[-1] + 1))
     w.write('\n'.join([str(pos) for pos in poses]) + '\n')
@@ -131,7 +131,7 @@ def to_ldhat(plink_pref, ld_sites, ld_locs):
     w = open(ld_sites, 'w')
     w.write('%d %d 2\n' % (ninds, len(poses)))
     for l in f:
-        toks = l.rstrip().replace(" ", "\t").split("\t")
+        toks = l.rstrip().replace(' ', '\t').split('\t')
         ind = toks[1]
         alleles = toks[6:]
         w.write('>%s\n' % ind)
@@ -144,4 +144,45 @@ def to_ldhat(plink_pref, ld_sites, ld_locs):
                 w.write('0' if a1 == min(all_alleles[i]) else '1')
         w.write('\n')
     w.close()
+    f.close()
+
+
+def to_eigen(plink_pref, eigen_pref):
+    '''Converts a PED/MAP 1/2 PLINK file to EIGENSOFT ind/snp/geno.
+
+    :param plink_pref: PLINK prefix (recode12)
+    :param eigen_pref: EIGENSOFT prefix
+    '''
+    f = open(plink_pref + '.ped')
+    iw = open(eigen_pref + '.ind', 'w')
+    snps = {}
+    for l in f:
+        toks = l.rstrip().replace(' ', '\t').split('\t')
+        # The above seems to change from plink 1 to 2
+        ind = toks[0] + '/' + toks[1]
+        iw.write(ind + '\tU\tControl\n')
+        for li in range(len(toks[6:]) // 2):
+            a1 = toks[2 * li + 6]
+            a2 = toks[2 * li + 6 + 1]
+            if a1 not in ['1', '2'] or a2 not in ['1', '2']:
+                snps[li] = snps.get(li, '') + '9'
+            else:
+                snps[li] = snps.get(li, '') + str(int(a1 == '1') + int(a2 == '1'))
+    iw.close()
+
+    f = open(plink_pref + '.map')
+    sw = open(eigen_pref + '.snp', 'w')
+    for l in f:
+        toks = l.rstrip().split('\t')
+        chro = toks[0]
+        sw.write('%s\t%s\t0.0\t%s\n' % (toks[1], chro, toks[3]))
+    sw.close()
+    f.close()
+
+    gw = open(eigen_pref + '.geno', 'w')
+    poses = list(snps.keys())
+    poses.sort()
+    for pos in poses:
+        gw.write(snps[pos] + "\n")
+    gw.close()
     f.close()

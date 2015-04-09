@@ -39,7 +39,7 @@ class Genome:
 
             def calc_key(x):
                 try:
-                    #ordering of numerical chromosomes
+                    # ordering of numerical chromosomes
                     return '%04d' % int(x)
                 except:
                     return x

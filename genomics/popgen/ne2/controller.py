@@ -16,14 +16,14 @@ import sys
 
 class NeEstimator2Controller:
     def __init__(self, ne2_dir=None):
-        """Initializes the controller.
+        '''Initializes the controller for NeEstimator2.
 
         The initializer checks for existance and executability of binaries.
 
         @param ne2_dir is the directory where NeEstimator2 is. If empty
                        the system will try to find the binary on the PATH.
 
-        """
+        '''
         self.platform = sys.platform
         if self.platform == 'win32':
             self.bin_name = 'Ne2.exe'
@@ -48,11 +48,10 @@ class NeEstimator2Controller:
         else:
             raise IOError("NeEstimator2 not available")
 
-    def run_neestimator2(self, in_dir, gen_file, out_dir, out_file,
-                         crits=[], LD=True, hets=False,
-                         coanc=False, temp=None,
-                         monogamy=False, options={}):
-        """Executes NeEstimator2.
+    def run(self, in_dir, gen_file, out_dir, out_file,
+            crits=[], LD=True, hets=False, coanc=False, temp=None,
+            monogamy=False, options={}):
+        '''Executes NeEstimator2.
 
 
         @param in_dir   The input directory
@@ -67,7 +66,7 @@ class NeEstimator2Controller:
 
         XXX document options
 
-        """
+        '''
         in_name = 'in.le' + str(os.getpid())
         inf = open(in_name, 'w')
         val = 0

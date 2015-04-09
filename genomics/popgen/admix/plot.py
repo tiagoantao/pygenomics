@@ -66,7 +66,7 @@ def single(components, cluster, nrows=1, with_names=False,
                 i += 1
         if with_white_bar:
             sp.bar(range(len(row_inds)),
-                   [i % 2 == 0 for i in range(len(row_inds))],
+                   [j % 2 == 0 for j in range(len(row_inds))],
                    color='white', alpha=0.4, lw=0, width=1)
         pos = 0
         for name, inds in cluster.items():
