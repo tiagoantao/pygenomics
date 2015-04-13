@@ -47,11 +47,16 @@ class Config:
     def load_config(self):
         config = cp.ConfigParser()
         config.read(self.config_file)
-        self.mr_dir = config.get('main', 'mr_dir')
-        self.grid = config.get('main', 'grid')
-        if self.grid == 'Local':
-            self.grid_limit = config.get('grid.local', 'limit')
-            if self.grid_limit.find('.') > -1:
-                self.grid_limit = float(self.grid_limit)
-            else:
-                self.grid_limit = int(self.grid_limit)
+        try:
+            self.mr_dir = config.get('main', 'mr_dir')
+            self.grid = config.get('main', 'grid')
+            if self.grid == 'Local':
+                self.grid_limit = config.get('grid.local', 'limit')
+                if self.grid_limit.find('.') > -1:
+                    self.grid_limit = float(self.grid_limit)
+                else:
+                    self.grid_limit = int(self.grid_limit)
+        except cp.NoSectionError:
+            self.mr_dir = '/tmp'
+            self.grid = 'Local'
+            self.grid_limit = 1.0
