@@ -8,7 +8,6 @@ For more in-depth instructions, see the installation section of the
 manual:
 
 '''
-from distutils.command.install import install
 from setuptools import Command, find_packages, setup
 import os
 
@@ -53,7 +52,8 @@ setup(
     keywords = 'genomics genetics population-genetics population-genomics',
     url = 'http://github.com/tiagoantao/pygenomics',
     packages=find_packages(),
-    install_requires=['six', 'enum34'],
+    py_modules=['genomics'],
+    install_requires=['six', 'enum34', 'setuptools'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
@@ -61,7 +61,6 @@ setup(
         'Operating System :: POSIX :: Linux',
     ],
     cmdclass={
-        'install': install,
         'doc': Sphinx
     },
 )
