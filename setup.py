@@ -53,7 +53,7 @@ setup(
     keywords = 'genomics genetics population-genetics population-genomics',
     url = 'http://github.com/tiagoantao/pygenomics',
     packages=find_packages(),
-    install_requires=['six'],
+    install_requires=['six', 'enum34'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
