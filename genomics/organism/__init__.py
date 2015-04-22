@@ -66,7 +66,7 @@ def remove_chromosome(genome, chrom):
     try:
         del genome.chrom_order[genome.chrom_order.index(chrom)]
     except ValueError:
-            pass
+        pass
     return genome
 
 
