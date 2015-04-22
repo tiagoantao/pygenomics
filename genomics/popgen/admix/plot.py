@@ -93,7 +93,7 @@ def single(components, cluster, nrows=1, with_names=False,
                         backgroundcolor='white')
                 pos += 1
 
-    inds_row = math.ceil(len(all_ind_ks) / nrows)
+    inds_row = len(all_ind_ks) // nrows
     for row in range(nrows):
         if nrows == 1:
             sp = ax
