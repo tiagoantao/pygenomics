@@ -16,7 +16,7 @@ import numpy
 from matplotlib import patches
 import matplotlib.pyplot as plt
 
-from .. import organism
+from genomics import organism
 
 
 def get_defaults(add_ax=True, **kwargs):
