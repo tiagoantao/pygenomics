@@ -1,0 +1,20 @@
+#Special configuration file to run tests on Travis-CI via GitHub notifications
+#See http://travis-ci.org/ for details
+#
+
+language: python
+python:
+  - "2.7"
+  - "3.4"
+
+before_install:
+  - "export PY3=yes"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then export PY3=no; fi"
+  - "export PYPY=no"
+#Misc command line tools we can call
+#  - "sudo apt-get install clustalw clustalo"
+#  - "pip install rdflib"
+
+script:
+  - python setup.py test
+
