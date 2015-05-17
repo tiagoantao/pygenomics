@@ -15,6 +15,13 @@ CentroPos = Enum('CentroPos', 'left right center unknown')
 
 
 class Genome:
+    '''Representation of a Genome.
+
+    A genome has a name, a short name, a (NCBI) taxon id and description.
+    It is composed of a set of chromosomes, which have an order.
+
+    >>> hs37 = Genome('Homo sapiens build 37', 'Hs', 9606, 'Hs b37')
+    '''
     def __init__(self, name, short_name, taxid, desc):
         self.name = name
         self.short_name = short_name

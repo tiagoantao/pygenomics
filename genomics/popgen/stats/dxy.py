@@ -12,11 +12,10 @@ def calc_seq_freqs(seqs):
 
     >>> calc_seq_freqs(['a'])
     {'a': 1.0}
-    >>> calc_seq_freqs(['a', 'b'])
-    {'a': 0.5, 'b': 0.5}
-    >>> calc_seq_freqs(['a', 'b', 'b'])
-    {'a': 0.3333333333333333, 'b': 0.6666666666666666}
-
+    >>> calc_seq_freqs(['a', 'b']) == {'a': 0.5, 'b': 0.5}
+    True
+    >>> calc_seq_freqs(['a', 'b', 'b']) == {'a': 0.3333333333333333, 'b': 0.6666666666666666}
+    True
     """
     cnt_seq = 0
     seq_freqs = {}
