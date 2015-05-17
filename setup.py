@@ -67,14 +67,19 @@ setup(
     description=('A modern genomics library'),
     keywords='genomics genetics population-genetics population-genomics',
     url='http://github.com/tiagoantao/pygenomics',
+    license='AGPLv3',
     packages=find_packages(),
     py_modules=['genomics'],
     install_requires=['six', 'enum34', 'setuptools'],
     classifiers=[
         'Development Status :: 3 - Alpha',
+	'Programming Language :: Python :: 2.7',
+	'Programming Language :: Python :: 3.4',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'License :: OSI Approved :: GNU Affero General Public License v3',
         'Operating System :: POSIX :: Linux',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research'
     ],
     cmdclass={
         'doc': Sphinx,
