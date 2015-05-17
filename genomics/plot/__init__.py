@@ -54,16 +54,14 @@ class GenomePlot:
 class GridGenomePlot(GenomePlot):
     """A Genome plotted as a Grid.
 
-    - genome - A organism.Genome object
-    - ncols  - number of columns
+    Args:
+        genome: A :class:`genomics.organism.Genome` object
+        ncols: Number of columns
     """
 
     def __init__(self, genome, ncols, **kwargs):
-        """
-        >>> from igrat.genetics.organism import genome_db
-        >>> ggp = GridGenomePlot(genome_db['Ag'], 2)
-        >>> ggp.fig.savefig("test.png")
-        """
+        '''
+        '''
         GenomePlot.__init__(self, **kwargs)
         chroms = genome.chrom_order
         nrows = math.ceil(len(chroms) / ncols)
@@ -192,8 +190,3 @@ def plot_percentile(ax, data, wsize, wstep,
         ax.plot(xs, pts[len(pts) // 2], 'w')
     for i in range(len(fpts)):
         ax.plot(xs, fpts[i], funcs[i][1])
-
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
