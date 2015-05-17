@@ -12,8 +12,8 @@ before_install:
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then export PY3=no; fi"
   - "export PYPY=no"
 #Misc command line tools we can call
-  - "pip install matplotlib six scipy numpy"
-#  - "pip install rdflib"
+  - "sudo apt-get install python3-scipy python-scipy python3-matplotlib python-matplotlib"
+  - "pip install six"
 
 script:
   - python setup.py test
