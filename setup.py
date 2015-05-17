@@ -17,6 +17,22 @@ for line in open('genomics/__init__.py'):
         exec(line.strip())
 
 
+class PyTest(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import subprocess
+        import sys
+        errno = subprocess.call([sys.executable, 'runtests.py'])
+        raise SystemExit(errno)
+
+
 class Sphinx(Command):
     user_options = []
     description = 'build sphinx documentation'
@@ -49,8 +65,8 @@ setup(
     author='Tiago Antao',
     author_email='tra@popgen.net',
     description=('A modern genomics library'),
-    keywords = 'genomics genetics population-genetics population-genomics',
-    url = 'http://github.com/tiagoantao/pygenomics',
+    keywords='genomics genetics population-genetics population-genomics',
+    url='http://github.com/tiagoantao/pygenomics',
     packages=find_packages(),
     py_modules=['genomics'],
     install_requires=['six', 'enum34', 'setuptools'],
@@ -61,7 +77,8 @@ setup(
         'Operating System :: POSIX :: Linux',
     ],
     cmdclass={
-        'doc': Sphinx
+        'doc': Sphinx,
+        'test': PyTest
     },
 )
 
