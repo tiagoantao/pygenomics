@@ -128,12 +128,12 @@ class GridGenomePlot(GenomePlot):
 
 
 def plot_percentile(ax, data, wsize, wstep,
-                    geofuncs=[partial(numpy.percentile, q=5),
+                    geofuncs=(partial(numpy.percentile, q=5),
                               partial(numpy.percentile, q=20),
                               numpy.median,
                               partial(numpy.percentile, q=80),
-                              partial(numpy.percentile, q=95)],
-                    funcs=[(max, '.'), (numpy.mean, '#0099FF'), (min, '.')]):
+                              partial(numpy.percentile, q=95)),
+                    funcs=((max, '.'), (numpy.mean, '#0099FF'), (min, '.'))):
     """Plot percentiles.
 
     Data should be presented sorted by x as a list of pairs of x, y.
