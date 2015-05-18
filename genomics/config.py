@@ -10,10 +10,10 @@
 
 '''
 import os
-try:
-    import configparser as cp
-except:
-    import ConfigParser as cp
+
+import six
+
+from six.moves import configparser
 
 config_file = os.path.expanduser('~/.config/pygenomics/main.conf')
 # This can be configured before loading of the main module to read another file
