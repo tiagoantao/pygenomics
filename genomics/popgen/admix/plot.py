@@ -113,7 +113,7 @@ def single(components, cluster, nrows=1, with_names=False,
     return fig
 
 
-def stacked(k_components, cluster, fig, k_colors={}, **kwargs):
+def stacked(k_components, cluster, fig, k_colors=None, **kwargs):
     '''Plots stacked admixture plots in increasing order of K.
 
     Parameters:
@@ -122,6 +122,7 @@ def stacked(k_components, cluster, fig, k_colors={}, **kwargs):
         - fig           - matplotlib figure
         - k_colors      - color per K (can be incomplete)
     '''
+    k_colors = k_colors or {}
     fig.clf()
     ks = list(k_components.keys())
     ks.sort()
