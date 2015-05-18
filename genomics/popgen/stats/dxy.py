@@ -5,6 +5,7 @@
 
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 '''
+from __future__ import division
 
 
 def calc_seq_freqs(seqs):
