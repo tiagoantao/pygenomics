@@ -64,7 +64,7 @@ class Genome:
 
 
 def remove_chromosome(genome, chrom):
-    """Creates a new Genome object with a chromosome removed"""
+    '''Creates a new Genome object with a chromosome removed'''
     genome = deepcopy(genome)
     try:
         del genome.chroms[chrom]
@@ -78,7 +78,7 @@ def remove_chromosome(genome, chrom):
 
 
 def remove_sex_chromosomes(genome):
-    """Creates a new Genome object with sex chromosomes removed"""
+    '''Creates a new Genome object with sex chromosomes removed'''
     for chrom in ['X', 'Y']:
         genome = remove_chromosome(genome, chrom)
     return genome

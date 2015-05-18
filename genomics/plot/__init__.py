@@ -30,6 +30,7 @@ def get_defaults(add_ax=True, **kwargs):
 
 
 class GenomePlot:
+    # TODO: use abc
     """A Genome plot.
 
     For now only thought for complete genomes (i.e. not it scaffold state)
@@ -140,26 +141,26 @@ def plot_percentile(ax, data, wsize, wstep,
     pts = [[] for i in range(len(geofuncs))]
     fpts = [[] for i in range(len(funcs))]
     xs = []
-    binIndexes = []
-    minPos = 0
+    bin_indexes = []
+    min_pos = 0
     minx = data[0][0]
     maxx = data[-1][0]
     half = wsize / 2
     for bindex in range(math.floor(minx / wstep), math.ceil(maxx / wstep)):
-        binIndexes.append([0, 0])
+        bin_indexes.append([0, 0])
         middle = wstep * bindex + half
         start = middle - half
         end = middle + half
-        for pos in range(minPos, len(data)):
+        for pos in range(min_pos, len(data)):
             x = data[pos][0]
             if x < start:
-                minPos = pos + 1
+                min_pos = pos + 1
                 continue
             if x > end:
                 break
-            binIndexes[-1][1] = pos
-        binIndexes[-1][0] = minPos
-    for start, end in binIndexes:
+            bin_indexes[-1][1] = pos
+        bin_indexes[-1][0] = min_pos
+    for start, end in bin_indexes:
         xstart = data[start][0]
         xs.append(xstart + half)
         my_data = [y[1] for y in data[start:end + 1]]
