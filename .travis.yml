@@ -11,6 +11,8 @@ before_install:
   - "export PY3=yes"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then export PY3=no; fi"
   - "export PYPY=no"
+
+install:
 #Misc command line tools we can call
   - "sudo apt-get install python3-scipy python-scipy python-matplotlib"
   - "pip install six"
