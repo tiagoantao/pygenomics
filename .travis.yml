@@ -12,7 +12,7 @@ before_install:
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then export PY3=no; fi"
   - "export PYPY=no"
 #Misc command line tools we can call
-  - "sudo apt-get install libatlas-base-dev"
+  - "sudo apt-get install libatlas-base-dev gfortran"
   - "pip install six numpy"
   - "pip install scipy"
   - "pip install matplotlib"
