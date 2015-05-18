@@ -65,7 +65,7 @@ class Local(object):
                     block/barrier)
         '''
         self.clean_done()
-        numWaits = 0
+        num_waits = 0
         if self.limit > 0 and type(self.limit) == int:
             cond = 'len(self.running) >= self.cpus - self.limit'
         elif self.limit < 0:
@@ -75,7 +75,7 @@ class Local(object):
         while eval(cond) or (for_all and len(self.running) > 0):
             time.sleep(1)
             self.clean_done()
-            numWaits += 1
+            num_waits += 1
 
     def submit(self, command, parameters):
         '''Submits a job
