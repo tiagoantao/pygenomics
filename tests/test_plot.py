@@ -4,8 +4,8 @@
 def test_basic_chart():
     from os import path
     import tempfile
-    import matplotlib
-    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    plt.switch_backend('Agg')
     from genomics.plot import GridGenomePlot
     from genomics.organism import genome_db
     ggp = GridGenomePlot(genome_db['Ag'], 2)
