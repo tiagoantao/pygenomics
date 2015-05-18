@@ -29,7 +29,7 @@ def get_defaults(add_ax=True, **kwargs):
     return fig, ax
 
 
-class GenomePlot:
+class GenomePlot(object):
     # TODO: use abc
     """A Genome plot.
 

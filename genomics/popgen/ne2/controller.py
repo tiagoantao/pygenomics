@@ -14,7 +14,7 @@ import os
 import sys
 
 
-class NeEstimator2Controller:
+class NeEstimator2Controller(object):
     def __init__(self, ne2_dir=None):
         '''Initializes the controller for NeEstimator2.
 

@@ -23,7 +23,7 @@ import subprocess
 import time
 
 
-class Local:
+class Local(object):
     '''Local executor.
 
      Args:
@@ -103,7 +103,7 @@ class Local:
             del self.err
 
 
-class Pseudo:
+class Pseudo(object):
     '''The pseudo executor.
 
         This executor will Dump of list of nohup nice commands
@@ -111,7 +111,6 @@ class Pseudo:
     def __init__(self, out_file="/tmp/pseudo%d" % (os.getpid())):
         '''out_file is where the text is written'''
         self.out_file = open(out_file, "a")
-        pass
 
     def submit(self, command, parameters):
         '''Submits a job'''
@@ -123,7 +122,7 @@ class Pseudo:
         self.out_file.close()
 
 
-class LSF:
+class LSF(object):
     '''The LSF executor.
 
     .. danger:: This is not tested for long. Probably does not work
@@ -200,7 +199,7 @@ class LSF:
         self.num_passes += 1
 
 
-class SGE:
+class SGE(object):
     ''' The SGE executor'''
     def __init__(self, mail_user=None):
         '''Constructor'''
@@ -288,7 +287,7 @@ class SGE:
         self.running.append(job)
 
 
-class Torque:
+class Torque(object):
     ''' The Torque executor.'''
     def __init__(self, mail_user=None):
         '''Constructor'''
@@ -368,7 +367,7 @@ class Torque:
         self.running.append(job)
 
 
-class SLURM:
+class SLURM(object):
     ''' The SLURM executor.'''
     def __init__(self, mail_user=None):
         '''Constructor'''

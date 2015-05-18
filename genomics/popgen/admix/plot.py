@@ -9,8 +9,6 @@
 .. moduleauthor:: Tiago Antao <tiago@popgen.net>
 '''
 
-import math
-
 from matplotlib import pyplot as plt
 
 #Most function names are not verbs because the module name is already one
