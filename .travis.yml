@@ -13,7 +13,9 @@ before_install:
   - "export PYPY=no"
 #Misc command line tools we can call
   - "sudo apt-get install libatlas-base-dev"
-  - "pip install six scipy numpy matplotlib"
+  - "pip install six scipy"
+  - "pip install numpy"
+  - "pip install matplotlib"
 
 script:
   - python setup.py test
