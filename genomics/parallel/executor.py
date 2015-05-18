@@ -175,7 +175,7 @@ class LSF(object):
                 self.clean_done()
                 time.sleep(1)
 
-    def submit(self, command, parameters='', myDir=os.getcwd()):
+    def submit(self, command, parameters='', my_dir=os.getcwd()):
         '''Submits a job'''
         M = self.mem * 1000
         job = "bsub -G malaria-dk -P malaria-dk -q %s "
