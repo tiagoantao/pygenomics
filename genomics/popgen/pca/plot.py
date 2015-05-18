@@ -15,7 +15,7 @@ from genomics.plot import get_defaults
 
 def render_pca(indivs, comp1=1, comp2=2,
                markers=None, colors=None,
-               weights=None, cluster=None, gray=[], tag_indivs=[],
+               weights=None, cluster=None, gray=None, tag_indivs=None,
                **kwargs):
     '''Plots two components of PCA.
 
@@ -31,6 +31,8 @@ def render_pca(indivs, comp1=1, comp2=2,
         - tag_indivs - List of individuals to tag (requires cluster)
         - markers    - Markers dictionary (cluster key -> marker)
     '''
+    gray = gray or []
+    tag_indivs = tag_indivs or []
     comp_cluster = {}
     if cluster is not None:
         groups = list(set(cluster.values()))
@@ -94,7 +96,7 @@ def render_pca(indivs, comp1=1, comp2=2,
 
 
 def render_pca_eight(indivs, title=None,
-                     weights=None, cluster=None, gray=[], tag_indivs=[],
+                     weights=None, cluster=None, gray=None, tag_indivs=None,
                      markers=None, colors=None,
                      **kwargs):
     '''Plots eight components of PCA.
@@ -110,6 +112,8 @@ def render_pca_eight(indivs, title=None,
         - tag_indivs - List of individuals to tag (requires cluster)
         - markers    - Markers dictionary (cluster key -> marker)
     '''
+    gray = gray or []
+    tag_indivs = tag_indivs or []
     comp_cluster = [{} for i in range(4)]
     if cluster is not None:
         groups = list(set(cluster.values()))
