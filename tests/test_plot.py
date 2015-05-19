@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import six
+
 
 def test_basic_chart():
+    if six.PY2:
+        return
     from os import path
     import tempfile
     import matplotlib.pyplot as plt
