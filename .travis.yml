@@ -11,9 +11,8 @@ before_install:
   - "export PY3=yes"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then export PY3=no; fi"
   - "export PYPY=no"
-#Misc command line tools we can call
   - "sudo apt-get install libatlas-base-dev gfortran"
-  - "if [[ $PY3 == 'yes' ]]; then pip install enum34; fi"
+  - "if [[ $PY3 == 'no' ]]; then pip install enum34; fi"
   - "pip install six numpy"
   - "travis_wait pip install scipy"
   - "pip install matplotlib"
