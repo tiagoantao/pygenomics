@@ -26,10 +26,11 @@ def _get_cluster(components, my_inds=None):
 
 
 def cluster(components, pop_ind=None):
-    '''Cluster of admixture results.
-     Parameters:
-        - components  - ordered dict individual -> components
-        - pop_ind     - ordered dict pop -> [individuals]
+    '''Clusters individuals according to admixture results.
+
+    Args:
+        components: ordered dict individual -> components
+        pop_ind: ordered dict pop -> [individuals]
 
         if pop_ind is None then all individuals are clustered
           irrespective of population
