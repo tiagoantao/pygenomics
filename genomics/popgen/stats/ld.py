@@ -13,7 +13,6 @@ def _calc_burrows_pair(indp, indq):
 
     >> _calc_burrows_pair([(0, 1)], [(0, 1)])
     """
-    print(indp, indq)
     fp = {}
     fq = {}
     Pijij = {}
@@ -61,9 +60,8 @@ def _calc_burrows_pair(indp, indq):
     rs = 0
     for p in fp:
         for q in fq:
-            print(p, q)
-            print(Pijij[p, q], PijIj[p, q], PijiJ[p, q], PijIJ[p, q], fp[p], fq[q])
-            rs += Pijij[p, q] + PijIj[p, q] + PijiJ[p, q] + PijIJ[p, q] - 2 * fp[p] * fq[q]
+            rs += Pijij[p, q] + PijIj[p, q] + PijiJ[p, q] + PijIJ[p, q] -\
+                2 * fp[p] * fq[q]
     return rs
 
 
@@ -80,7 +78,7 @@ def calc_burrows_delta(indlist):
         List of burrows deltas. For the example above it would be composed
         of 3 values (between locus 1 and 2, 1 and 3, 2 and 3)
 
-    >>> calc_burrows_delta([('3a', '3a'), ('3b', '3a')])[0]
+    >> calc_burrows_delta([('3a', '3a'), ('3b', '3a')])[0]
     0.59259
 
     """
@@ -95,6 +93,3 @@ def calc_burrows_delta(indlist):
 
 if __name__ == "__main__":
     print (calc_burrows_delta([('3a', '3a'), ('3b', '3a')]))
-    #import doctest
-
-    #doctest.testmod()

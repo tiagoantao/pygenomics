@@ -15,6 +15,13 @@ CentroPos = Enum('CentroPos', 'left right center unknown')
 
 
 class Genome:
+    '''Representation of a Genome.
+
+    A genome has a name, a short name, a (NCBI) taxon id and description.
+    It is composed of a set of chromosomes, which have an order.
+
+    >>> hs37 = Genome('Homo sapiens build 37', 'Hs', 9606, 'Hs b37')
+    '''
     def __init__(self, name, short_name, taxid, desc):
         self.name = name
         self.short_name = short_name
@@ -57,7 +64,7 @@ class Genome:
 
 
 def remove_chromosome(genome, chrom):
-    """Creates a new Genome object with a chromosome removed"""
+    '''Creates a new Genome object with a chromosome removed'''
     genome = deepcopy(genome)
     try:
         del genome.chroms[chrom]
@@ -71,7 +78,7 @@ def remove_chromosome(genome, chrom):
 
 
 def remove_sex_chromosomes(genome):
-    """Creates a new Genome object with sex chromosomes removed"""
+    '''Creates a new Genome object with sex chromosomes removed'''
     for chrom in ['X', 'Y']:
         genome = remove_chromosome(genome, chrom)
     return genome

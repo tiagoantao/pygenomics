@@ -11,7 +11,7 @@
 import pprint
 
 
-class Record:
+class Record(object):
     '''Holds information from a NeEstimator2 OUTPUT file.
 
     @ivar freqs_used  Frequencies used as a cutoff. The list

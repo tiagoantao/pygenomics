@@ -12,7 +12,7 @@
 import os
 
 
-class SmartPCAController:
+class SmartPCAController(object):
     '''Controller for EIGENSOFT smartpca.
 
     pref - the prefix of all input and output files

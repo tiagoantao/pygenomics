@@ -14,7 +14,7 @@ import os
 import sys
 
 
-class NeEstimator2Controller:
+class NeEstimator2Controller(object):
     def __init__(self, ne2_dir=None):
         '''Initializes the controller for NeEstimator2.
 
@@ -49,24 +49,25 @@ class NeEstimator2Controller:
             raise IOError("NeEstimator2 not available")
 
     def run(self, in_dir, gen_file, out_dir, out_file,
-            crits=[], LD=True, hets=False, coanc=False, temp=None,
-            monogamy=False, options={}):
+            crits=None, LD=True, hets=False, coanc=False, temp=None,
+            monogamy=False, options=None):
         '''Executes NeEstimator2.
 
-
-        @param in_dir   The input directory
-        @param gen_file The genepop file
-        @param out_dir  The output directory
-        @param out_file Where the output will be stored
-        @param LD       Do LD method
-        @param hets     Do excessive heterozygosity
-        @param coanc    Do Molecular coancestry
-        @param temp     List of generations for the temporal method
-                        (None = Not do)
+        Args:
+            in_dir: The input directory
+            gen_file The genepop file
+            out_dir: The output directory
+            out_file Where the output will be stored
+            LD: Do LD method
+            hets: Do excessive heterozygosity
+            coanc: Do Molecular coancestry
+            temp: List of generations for the temporal method (None = Not do)
 
         XXX document options
 
         '''
+        crits = crits or []
+        options = options or {}
         in_name = 'in.le' + str(os.getpid())
         inf = open(in_name, 'w')
         val = 0

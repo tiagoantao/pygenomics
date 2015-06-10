@@ -12,14 +12,16 @@
 from . import config
 from .parallel import executor
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 
 class GenomicsException(Exception):
     '''A general exception for the library'''
 
+#Loading the configuration
 cfg = config.Config()
 cfg.load_config()
+#Configuring the executor
 if cfg.grid == 'Local':
     lexec = executor.Local(cfg.grid_limit)
 else:

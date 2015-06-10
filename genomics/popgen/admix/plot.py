@@ -9,8 +9,6 @@
 .. moduleauthor:: Tiago Antao <tiago@popgen.net>
 '''
 
-import math
-
 from matplotlib import pyplot as plt
 
 #Most function names are not verbs because the module name is already one
@@ -40,10 +38,10 @@ def single(components, cluster, nrows=1, with_names=False,
            **kwargs):
     '''Plots Admixture.
 
-    Parameters:
-        - components      - dict individual -> components
-        - cluster         - list of tuple (cluster, [individuals])
-        - with_pop_labels - print pop labels
+    Args:
+        components: dict individual -> components
+        cluster: list of tuple (cluster, [individuals])
+        with_pop_labels: print pop labels
     '''
     fig, ax = _get_defaults(**kwargs)
     nrows = kwargs.get('nrows', 1)
@@ -113,15 +111,16 @@ def single(components, cluster, nrows=1, with_names=False,
     return fig
 
 
-def stacked(k_components, cluster, fig, k_colors={}, **kwargs):
+def stacked(k_components, cluster, fig, k_colors=None, **kwargs):
     '''Plots stacked admixture plots in increasing order of K.
 
-    Parameters:
-        - k_components  - dict k -> (dict individual -> components)
-        - cluster       - list of tuple (cluster, [individuals])
-        - fig           - matplotlib figure
-        - k_colors      - color per K (can be incomplete)
+    Args:
+        k_components: dict k -> (dict individual -> components)
+        cluster: list of tuple (cluster, [individuals])
+        fig: matplotlib figure
+        k_colors: color per K (can be incomplete)
     '''
+    k_colors = k_colors or {}
     fig.clf()
     ks = list(k_components.keys())
     ks.sort()

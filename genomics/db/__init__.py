@@ -16,6 +16,10 @@ import os
 import six
 
 
+if six.PY2:
+    FileExistsError = OSError
+
+
 class DBException(Exception):
     def __init__(self, value):
         self.value = value

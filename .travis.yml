@@ -1,0 +1,28 @@
+#Special configuration file to run tests on Travis-CI via GitHub notifications
+#See http://travis-ci.org/ for details
+#
+
+language: python
+python:
+  - "2.7"
+  - "3.4"
+
+before_install:
+  - "export PY3=yes"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then export PY3=no; fi"
+  - "export PYPY=no"
+
+install:
+  - "sudo apt-get install libatlas-base-dev gfortran"
+  - "if [[ $PY3 == 'no' ]]; then pip install enum34; fi"
+  - "pip install six numpy"
+  - "travis_wait pip install scipy"
+  - "pip install matplotlib"
+  - "pip install coveralls"
+
+script:
+  - coverage run --source genomics runtests.py
+
+after_success:
+  - coveralls
+
