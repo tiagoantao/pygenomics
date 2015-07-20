@@ -1,13 +1,11 @@
-.. Python Genomics documentation master file, created by
-   sphinx-quickstart on Sat Jun 14 13:02:14 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. Python Genomics documentation master file
 
 Welcome to Python Genomics' documentation!
 ==========================================
 
 
-pygenomics is a modern library for genomics work in Python 3.4 and above.
+pygenomics is a modern library for genomics work in Python 3.4 and above
+(with some support for Python 2.7).
 
 Contents:
 
