@@ -25,6 +25,15 @@ def _get_cluster(components, my_inds=None):
     return ll
 
 
+def get_main_component(components):
+    '''Gets the main component per individual (value and index)'''
+    main_comps = {}
+    for ind, comps in components.items():
+        idx = comps.index(max(comps))
+        main_comps[ind] = comps[idx], idx
+    return main_comps
+
+
 def cluster(components, pop_ind=None):
     '''Clusters individuals according to admixture results.
 
