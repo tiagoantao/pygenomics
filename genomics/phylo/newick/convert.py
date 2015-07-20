@@ -3,59 +3,50 @@
 .. module:: genomics.phylo.newick.convert
    :synopsis: Newick conversion to other formats
    :noindex:
-   :copyright: Copyright 2014 by Tiago Antao
+   :copyright: Copyright 2015 by Tiago Antao
    :license: GNU Affero, see LICENSE for details
 
 .. moduleauthor:: Tiago Antao <tra@popgen.net>
 
 '''
-import os
+import networkx as nx
 
-def _phylo_to_networkx(node, graph=None, my_id=0):
-    graph = graph or nx.Graph()
 
-    if node.is_terminal():
-        next_id = my_id + 1
-        name = node.name
+def _phylo_to_networkx(tree, _node=None, _graph=None, _my_id=None):
+    '''Converts a Bio.Phylo.BaseTree.Tree to NetworkX
+
+    Args:
+        tree: Biopython's tree
+        _node: Current node
+        _graph: The NetworkX graph, internal parameter
+        _my_id: ongoing ID, internal parameter
+    '''
+    if _node is None:
+        _node = tree.root
+        _my_id = 0
+    graph = _graph or nx.Graph()
+
+    if _node.is_terminal():
+        next_id = _my_id + 1
+        name = _node.name
         graph.add_node(name)
-        node = graph.node[name]
-        add_counts(haplo_to_seq[haplo], node)
-        resistances = set([resistance])
     else:
-        resistances = set()
-        name = '%d' % my_id 
-        graph.add_node(name, size=0.01)
-        next_id = my_id + 1
-        size = 0.0
-        for child in node:
-            ret = phylo_to_networkx(child, graph, next_id)
-            child_res = ret['resistances']
-            size += ret['size']
-            if len(child_res) == 1:
-                res = list(child_res)[0]
-                if res == 'TA':
-                    color = '#00FF00'
-                elif res == 'TT':
-                    color = '#FF3000'
-                elif res == 'CA':
-                    color = '#FF0030'
-                else:
-                    print(res)
-            else:
-                color = '#000000'
-            resistances |= child_res
-            graph.add_weighted_edges_from([(name, ret['name'], child.total_branch_length())], color=color)
+        name = '%d' % _my_id
+        graph.add_node(name)
+        for child in _node:
+            ret = _phylo_to_networkx(child, graph, next_id)
+            next_id = _my_id + 1
+            graph.add_weighted_edges_from([(name, ret['name'],
+                                            child.total_branch_length())])
             next_id = ret['next_id'] + 1
-    return {'graph': graph, 'next_id': next_id, 'name': name,
-            'resistances': resistances, 'size': size,
-           }
+    return {'graph': graph, 'next_id': next_id, 'name': name}
 
 
 def to_networkx(tree):
     '''Converts a Newick tree to NetworkX.
 
     Args:
-        tree: A Newick tree from Biopython's Bio.Phylo.read
+        tree: A tree from Biopython's Bio.Phylo.BaseTreeTree
 
     Returns:
         A NetworkX Graph
@@ -63,3 +54,4 @@ def to_networkx(tree):
     Requires NetworkX but not Biopython, though you will need it to
         parse the tree
     '''
+    return _phylo_to_networkx(tree)
