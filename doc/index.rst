@@ -1,6 +1,6 @@
 .. Python Genomics documentation master file
 
-Welcome to Python Genomics' documentation!
+Welcome to pygenomics' documentation!
 ==========================================
 
 
