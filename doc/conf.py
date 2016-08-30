@@ -50,8 +50,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Python Genomics'
-copyright = u'2014, Tiago Antao'
+project = u'pygenomics'
+copyright = u'2014-2015, Tiago Antao'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
