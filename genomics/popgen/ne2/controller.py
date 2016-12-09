@@ -111,7 +111,7 @@ class NeEstimator2Controller(object):
             opf.write('0\n')
             opf.close()
         os.system(self.ne2_dir + os.sep + self.bin_name +
-                  ' i:' + in_name + opt_txt + ' >/dev/null 2>&1')
+                  ' i:' + in_name + opt_txt + ' >' + os.devnull + ' 2>&1')
         os.remove(in_name)
         if len(options) > 0:
             os.remove(opt_name)
