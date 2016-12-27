@@ -12,7 +12,7 @@
 from . import config
 from .parallel import executor
 
-__version__ = '0.1.2+'
+__version__ = '0.1.4'
 
 
 class GenomicsException(Exception):
