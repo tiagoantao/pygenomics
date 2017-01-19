@@ -110,8 +110,17 @@ class NeEstimator2Controller(object):
             opf.write('0\n')
             opf.write('0\n')
             opf.close()
-        os.system(self.ne2_dir + os.sep + self.bin_name +
+
+        #Windows paths with directory names that
+        #include spaces will be misinterpreted by
+        #the system call unless we enclose the
+        #path and executable name in quotes.
+        exe_path = self.ne2_dir + os.sep + self.bin_name
+        quoted_exe_path = "\"" + exe_path + "\""
+
+        os.system( quoted_exe_path +
                   ' i:' + in_name + opt_txt + ' >' + os.devnull + ' 2>&1')
+
         os.remove(in_name)
         if len(options) > 0:
             os.remove(opt_name)
