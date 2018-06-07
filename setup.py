@@ -70,9 +70,9 @@ setup(
     license='AGPLv3',
     packages=find_packages(),
     py_modules=['genomics'],
-    install_requires=['six', 'enum34', 'setuptools'],
+    install_requires=['setuptools'],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python :: 3.5',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'License :: OSI Approved :: GNU Affero General Public License v3',
