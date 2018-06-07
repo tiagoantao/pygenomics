@@ -17,22 +17,6 @@ for line in open('genomics/__init__.py'):
         exec(line.strip())
 
 
-class PyTest(Command):
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        import subprocess
-        import sys
-        errno = subprocess.call([sys.executable, 'runtests.py'])
-        raise SystemExit(errno)
-
-
 class Sphinx(Command):
     user_options = []
     description = 'build sphinx documentation'
@@ -70,6 +54,8 @@ setup(
     license='AGPLv3',
     packages=find_packages(),
     py_modules=['genomics'],
+    setup_requires=['pytest-runner'],
+    test_requires=['pytest'],
     install_requires=['setuptools'],
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -81,8 +67,7 @@ setup(
         'Intended Audience :: Science/Research'
     ],
     cmdclass={
-        'doc': Sphinx,
-        'test': PyTest
+        'doc': Sphinx
     },
 )
 
