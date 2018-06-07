@@ -13,12 +13,6 @@ import abc
 import bz2
 import os
 
-import six
-
-
-if six.PY2:
-    FileExistsError = OSError
-
 
 class DBException(Exception):
     def __init__(self, value):
@@ -59,7 +53,7 @@ class Key:
         return str_
 
 
-class Schema(six.with_metaclass(abc.ABCMeta)):
+class Schema(abc.ABCMeta):
     '''A Database schema
 
     :param granularity: Record granularity
