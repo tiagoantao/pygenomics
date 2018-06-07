@@ -15,6 +15,7 @@ install:
   - "travis_wait pip install scipy"
   - "pip install matplotlib"
   - "pip install coveralls"
+  - "pip install networkx"
 
 script:
   - coverage run --source genomics setup.py test
