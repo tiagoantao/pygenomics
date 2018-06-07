@@ -63,7 +63,7 @@ setup(
     name='pygenomics',
     version=__version__,
     author='Tiago Antao',
-    author_email='tra@popgen.net',
+    author_email='tiagoantao@gmail.com',
     description=('A modern genomics library'),
     keywords='genomics genetics population-genetics population-genomics',
     url='http://github.com/tiagoantao/pygenomics',
@@ -73,8 +73,7 @@ setup(
     install_requires=['six', 'enum34', 'setuptools'],
     classifiers=[
         'Development Status :: 3 - Alpha',
-	'Programming Language :: Python :: 2.7',
-	'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'License :: OSI Approved :: GNU Affero General Public License v3',
         'Operating System :: POSIX :: Linux',
